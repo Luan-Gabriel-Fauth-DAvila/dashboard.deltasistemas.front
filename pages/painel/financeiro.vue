@@ -2,6 +2,17 @@
     <div>
         <Navbar />
         <section id="painel">
+            <!-- <div id="filter">
+                <div>
+                    <label for="">Data Inicio</label>
+                    <input type="date" id="data_ini">
+                </div>
+                <div>
+                    <label for="">Data Fim</label>
+                    <input type="date" id="data_fim">
+                </div>
+                <button @click="defData" id="buttom_filter">Aplicar</button>
+            </div> -->
             <div id="saldo_em_conta">
                 <div>
                     <h4>Saldo em Conta</h4>
@@ -99,10 +110,10 @@
             </div>
             <div id="fluxo_de_caixa">
                 <div>
-                    <h4>Fluxo de Caixa <small>(para os próximos 20 dias)</small></h4>
+                    <h4>Previsão de Faturas <small>(para os próximos 20 dias)</small></h4>
                 </div>
                 <div :style="{ height: '30vh' }">
-                    <canvas id="fluxo_20_dias_chart"></canvas>
+                    <div id="fluxo_20_dias_chart"></div>
                 </div>
             </div>
         </section>
@@ -166,6 +177,18 @@ export default {
                 sum = sum + parseFloat(res[i].valor)
             }
             this.saldoDisponivelEmContas_sum = sum
+        },
+        defData () {
+            const ini = self.data_ini.value.split('-', 3)
+            const fim = self.data_fim.value.split('-', 3)
+            window.location.href = ('http://localhost:3000/painel/financeiro/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
+        },
+        defFilter () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const data_ini = urlParams.get('data_ini')
+            const data_fim = urlParams.get('data_fim')
+            const urlFilter = '?data_ini='+data_ini+'&data_fim='+data_fim
+            return urlFilter
         },
 
         async contasReceberAtrasadas () {
@@ -362,48 +385,40 @@ export default {
             const req = await fetch(this.hostBackEnd+'/fluxo_de_caixa')
             const res = await req.json()
 
-            const data = {
-                labels: res.data,
-                datasets: [
-                    {
-                        label: 'Contas a Receber',
-                        data: res.contas_receber,
-                        tension: 0.3,
-                        borderColor: '#05CD99',
-                        backgroundColor: '#05CD99',
+            const total_vendas_mensal_chart = Highcharts.chart('fluxo_20_dias_chart', {
+                plotOptions: {
+                    series: {
+                        // general options for all series
                     },
-                    {
-                        label: 'Contas a Pagar',
-                        data: res.contas_pagar,
-                        tension: 0.3,
-                        borderColor: '#FF869C',
-                        backgroundColor: '#FF869C',
-                    }
-                ]
-            };
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
+                    spline: {
+                    },
+                },
+                chart: {
+                    height: parseInt(window.screen.height)*0.32
+                },
+                title: {
+                    text: undefined,
+                },
+                xAxis: {
+                    categories: res.data,
+                },
+                yAxis: {
+                    title: {
+                        text: undefined,
                     }
                 },
-            };
-            var chartStatus = Chart.getChart("fluxo_20_dias_chart");
-            if (chartStatus != undefined) {
-                chartStatus.data.datasets.data = res.total_vendas
-                chartStatus.update()
-            }else {
-                const total_por_agrupamento = new Chart(
-                    document.getElementById('fluxo_20_dias_chart'),
-                    config
-                );
-            }
+                series: [{
+                    type: 'spline',
+                    name: 'Contas a Pagar',
+                    data: res.contas_pagar,
+                    color: '#FF869C',
+                },{
+                    type: 'spline',
+                    name: 'Contas a Receber',
+                    data: res.contas_receber,
+                    color: '#05CD99',
+                }]
+            })
         }
     },
     mounted () {
@@ -508,8 +523,9 @@ h6 {
 #painel {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
-    grid-template-rows: 30vh 15vh 60vh 40vh 40vh;
-    grid-template-areas:    "saldo_em_conta saldo_em_conta saldo_em_conta saldo_em_conta"
+    grid-template-rows: 30vh 15vh 60vh 40vh 50vh;
+    grid-template-areas:    /*"filter filter filter filter"*/
+                            "saldo_em_conta saldo_em_conta saldo_em_conta saldo_em_conta"
                             "cr_atrasado cr_vencer cp_atrasado cp_vencer"
                             "contas_a_receber contas_a_receber contas_a_pagar contas_a_pagar"
                             "recebimentos_por_forma recebimentos_por_forma emprestimos emprestimos"
@@ -521,8 +537,10 @@ h6 {
   #painel {
         display: grid;
         grid-template-columns: 50% 50%;
-        grid-template-rows: 30vh 15vh 15vh 60vh 60vh 40vh 40vh;
-        grid-template-areas:    "saldo_em_conta saldo_em_conta"
+        grid-template-rows: 30vh 15vh 15vh 60vh 60vh 40vh 50vh;
+        grid-template-areas:    /*"filter filter"
+                                "filter filter"*/
+                                "saldo_em_conta saldo_em_conta"
                                 "cr_atrasado cr_vencer"
                                 "cp_atrasado cp_vencer"
                                 "contas_a_receber contas_a_receber"
@@ -534,6 +552,43 @@ h6 {
         padding: 5% 0;
    
     }
+}
+#filter {
+    grid-area: filter;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;  
+    align-items: center;
+
+    background: linear-gradient(135deg, rgb(67, 24, 255), rgb(134, 140, 255));
+    padding: 2vh 2vh;
+    margin: 2vh;
+    border-radius: .5vh;
+    color: #fff;
+    z-index: 0;
+}
+@media only screen and (max-width: 630px) {
+    #filter {
+        flex-direction: column;
+    }
+}
+#filter #data_ini,
+#filter #data_fim {
+    border: unset;
+    border-radius: 1vh;
+    padding: 1vh;
+}
+#buttom_filter {
+    border: unset;
+    padding: 1vh;
+    background-color: #fff;
+    color: #1B2559;
+    border-radius: .5vh;
+}
+#buttom_filter:hover {
+    box-shadow: 0 0 5px 0;
+    background-color: rgb(214, 214, 214);
 }
 #saldo_em_conta {
     grid-area: saldo_em_conta;

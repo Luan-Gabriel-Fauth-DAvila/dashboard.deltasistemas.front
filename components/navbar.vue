@@ -8,13 +8,13 @@
                 </div>
                 <div id="menu">
                         <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><a href="/painel/comercial/" id="menu_link">Comercial</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#D0D1D2;">Comercial</a></div>
+                        <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#aaaaaa;">Comercial</a></div>
 
                         <div id="div-menu_link" v-if="$route.path == '/painel/financeiro/'"><a href="/painel/financeiro/" id="menu_link">Financeiro</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#D0D1D2;">Financeiro</a></div>
+                        <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#aaaaaa;">Financeiro</a></div>
 
                         <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><a href="/painel/estoque/" id="menu_link">Estoque</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#D0D1D2;">Estoque</a></div>                    
+                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div>                    
                 </div>
             </div>
             <div id="perfil">
@@ -33,13 +33,13 @@
                     <button type="button" id="drop"><span class="material-icons-outlined">menu</span></button>
                     <div id="drop-content">
                         <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><a href="/painel/comercial/" id="menu_link">Comercial</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#D0D1D2;">Comercial</a></div>
+                        <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#aaaaaa;">Comercial</a></div>
 
                         <div id="div-menu_link" v-if="$route.path == '/painel/financeiro/'"><a href="/painel/financeiro/" id="menu_link">Financeiro</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#D0D1D2;">Financeiro</a></div>
+                        <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#aaaaaa;">Financeiro</a></div>
 
                         <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><a href="/painel/estoque/" id="menu_link">Estoque</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#D0D1D2;">Estoque</a></div> 
+                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div> 
                     </div>
                     </div>
                 </div>
@@ -159,6 +159,7 @@ html, body {
     align-items: center;
 
     text-decoration: unset;
+    font-weight: 800;
     color: #1B2559;
 }
 #down-bar {
@@ -252,19 +253,5 @@ html, body {
         background-color: white; 
         color: white;
     }
-}
-#filter {
-    display: flex;
-
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 0 10%;
-    height: 10vh;
-    z-index: 9999;
-
-    justify-content: space-between;
-    align-items: center;
 }
 </style>

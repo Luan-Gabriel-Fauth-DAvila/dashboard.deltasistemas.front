@@ -141,7 +141,8 @@ export default {
     },              
     data () {
         return {
-            hostBackEnd: 'http://127.0.0.1:8000',
+            hostBack: 'http://127.0.0.1:8000',
+            hostFront: 'http://localhost:3000',
             rankingclientes_var: null,
             rankingclientes_total_vendas: null,
             rankingclientes_sum: 0,
@@ -180,7 +181,7 @@ export default {
             let data = {
                 "token": sessionStorage.getItem("access")
             }
-            const req = await fetch('http://127.0.0.1:8000/jwt/verify/', {
+            const req = await fetch(this.hostBack+'/jwt/verify/', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {"Content-type": "application/json"}
@@ -192,7 +193,7 @@ export default {
                 let data = {
                     "refresh": sessionStorage.getItem("refresh")
                 }
-                const req_refresh = await fetch('http://127.0.0.1:8000/jwt/refresh/', {
+                const req_refresh = await fetch(this.hostBack+'/jwt/refresh/', {
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: {"Content-type": "application/json"}
@@ -200,13 +201,13 @@ export default {
                 const res_refresh = await req_refresh.json()
                 sessionStorage.setItem('access', res_refresh.access)
             }else{
-                window.location.href = "http://localhost:3000/login/"
+                window.location.href = this.hostFront+"/login/"
             }
         },
         defData () {
             const ini = self.data_ini.value.split('-', 3)
             const fim = self.data_fim.value.split('-', 3)
-            window.location.href = ('http://localhost:3000/painel/comercial/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
+            window.location.href = (this.hostFront+'/painel/comercial/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
         },
         defFilter () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -235,25 +236,25 @@ export default {
             return (cores[num])
         },
         async valorVendas () {
-            const req = await fetch(this.hostBackEnd+'/total_vendas/'+this.defFilter())
+            const req = await fetch(this.hostBack+'/total_vendas/'+this.defFilter())
             const res = await req.json()
             self.total_vendas_value.innerHTML = this.moneyFilter(res.total_vendas)
         },
 
         async valorCMV () {
-            const req = await fetch(this.hostBackEnd+'/total_cmv/'+this.defFilter())
+            const req = await fetch(this.hostBack+'/total_cmv/'+this.defFilter())
             const res = await req.json()
             self.total_cmv_value.innerHTML = this.moneyFilter(res.total_cmv)
         },
 
         async valorLucroBrutoMensal () {
-            const req = await fetch(this.hostBackEnd+'/lucro_bruto_mensal/'+this.defFilter())
+            const req = await fetch(this.hostBack+'/lucro_bruto_mensal/'+this.defFilter())
             const res = await req.json()
             self.total_lucro_bruto_value.innerHTML = this.moneyFilter(res.valor_total)
         },
         
         async valorVendasMensais () {
-            const req = await fetch(this.hostBackEnd+'/total_vendas_mensal/'+this.defFilter())
+            const req = await fetch(this.hostBack+'/total_vendas_mensal/'+this.defFilter())
             const res = await req.json()
 
             const total_vendas_mensal_chart = Highcharts.chart('total_vendas_mensal_chart', {
@@ -302,7 +303,7 @@ export default {
         },
 
         async valorVendasPorAgrupamento () {
-            const req = await fetch(this.hostBackEnd+'/vendas_por_agrupamento_mensal/'+this.defFilter())
+            const req = await fetch(this.hostBack+'/vendas_por_agrupamento_mensal/'+this.defFilter())
             const res = await req.json()
         
             const data = {
@@ -340,7 +341,7 @@ export default {
         },
 
         async metaDeVendas () {
-            const req = await fetch(this.hostBackEnd+'/meta_de_vendas')
+            const req = await fetch(this.hostBack+'/meta_de_vendas')
             const res = await req.json()
 
             this.metadevendas_total = parseFloat(res.total_vendido);
@@ -348,7 +349,7 @@ export default {
         },
 
         async rankingVendasPorVendedor () {
-            const req = await fetch(this.hostBackEnd+'/total_de_vendas_por_vendedor')
+            const req = await fetch(this.hostBack+'/total_de_vendas_por_vendedor')
             const res = await req.json()
 
             // this.rankingvendedores_var = res
@@ -388,7 +389,7 @@ export default {
         },
 
         async rankingVendasPorCliente () {
-            const req = await fetch(this.hostBackEnd+'/ranking_de_vendas_por_cliente')
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_cliente')
             const res = await req.json()
 
             // this.rankingclientes_var = res
@@ -428,7 +429,7 @@ export default {
         },
         
         async produtosMaisVendidos () {
-            const req = await fetch(this.hostBackEnd+'/ranking_de_vendas_por_produto')
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_produto')
             const res = await req.json()
             
             const data = {
@@ -587,6 +588,7 @@ h6 {
     grid-area: filter;
 
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;  
     align-items: center;
 
@@ -596,6 +598,11 @@ h6 {
     border-radius: .5vh;
     color: #fff;
     z-index: 0;
+}
+@media only screen and (max-width: 630px) {
+    #filter {
+        flex-direction: column;
+    }
 }
 #filter #data_ini,
 #filter #data_fim {

@@ -59,7 +59,6 @@ export default {
                 sessionStorage.setItem('username', this.username)
                 window.location.href = ('http://localhost:3000/painel/comercial/')
             }
-            console.log(res.access)
         },
         async verifyLogin () {
             try {
@@ -89,7 +88,6 @@ export default {
                 })
                 window.location.href = ('http://localhost:3000/painel/comercial/')
             }
-            console.log(res.access)
         }
     },
     created () {
