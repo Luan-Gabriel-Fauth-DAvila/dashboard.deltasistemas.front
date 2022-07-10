@@ -1,6 +1,6 @@
 {
     "apps": [{
-        "name": "bi-oxipora",
+        "name": "bi-oxipora-front",
         "script": "start",
         "args": ["run"],
         "exec_mode": "fork",
