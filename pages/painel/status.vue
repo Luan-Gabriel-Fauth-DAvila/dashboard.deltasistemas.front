@@ -39,7 +39,7 @@ export default {
     },
     data () {
         return {
-            hostBack: 'http://192.168.100.3:8000',
+            hostBack: 'http://188.166.65.228:8000',
             notasnaoemitidas: null,
         }
     },

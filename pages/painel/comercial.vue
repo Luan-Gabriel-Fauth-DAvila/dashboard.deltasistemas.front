@@ -149,8 +149,8 @@ export default {
     },              
     data () {
         return {
-            hostBack: 'http://192.168.100.3:8000',
-            hostFront: 'http://192.168.100.3:3000',
+            hostBack: 'http://188.166.65.228:8000',
+            hostFront: 'http://188.166.65.228:3000',
             rankingclientes_var: null,
             rankingclientes_total_vendas: null,
             rankingclientes_sum: 0,
@@ -210,7 +210,7 @@ export default {
                 const res_refresh = await req_refresh.json()
                 sessionStorage.setItem('access', res_refresh.access)
             }else{
-                // window.location.href = this.hostFront+"/login/"
+                window.location.href = this.hostFront+"/login/"
             }
         },
         defData () {

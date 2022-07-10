@@ -37,8 +37,8 @@ export default {
             password: '',
             remember: '',
             next: '',
-            hostBackEnd: 'http://192.168.100.3:8000',
-            hostFrontEnd: 'http://192.168.100.3:3000',
+            hostBackEnd: 'http://188.166.65.228:8000',
+            hostFrontEnd: 'http://188.166.65.228:3000',
         }
     },
     methods: {
