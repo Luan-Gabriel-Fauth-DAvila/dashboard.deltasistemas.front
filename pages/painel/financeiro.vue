@@ -138,7 +138,7 @@ export default {
     }, 
     data () {
         return {
-            hostBackEnd: 'http://127.0.0.1:8000',
+            hostBackEnd: 'http://192.168.100.3:8000',
             colors: [
                 '#c438ef',
                 '#05cd99',
@@ -271,8 +271,13 @@ export default {
             const req = await fetch(this.hostBackEnd+'/contas_a_pagar_por_ranking_e_dia')
             const res = await req.json()
 
+            let parceiro = []
+            res.parceiro.forEach(function (e) {
+                parceiro.push(e.substr(0,10))
+            })
+
             const data = {
-                labels: res.nome,
+                labels: parceiro,
                 datasets: [{
                     data: res.saldo,
                     label: 'Constas a Pagar',

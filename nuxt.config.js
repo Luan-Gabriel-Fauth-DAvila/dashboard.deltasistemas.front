@@ -1,23 +1,26 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  server: {
+    host: '0.0.0.0',
+  },
   head: {
-    title: 'bi_oxi',
+    title: 'Dashboard Delta Sistemas',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'pt-br'
     },
     script: [
-      // {
-      //   src: "https://cdn.jsdelivr.net/npm/chart.js",
-      //   body: true,
-      // },
-      // {
-      //   src: "https://code.highcharts.com/highcharts.js",
-      //   body: true,
-      // },
-      // {
-      //   src: "https://code.highcharts.com/modules/accessibility.js",
-      //   body: true,
-      // },
+      {
+        src: "https://cdn.jsdelivr.net/npm/chart.js",
+        body: true,
+      },
+      {
+        src: "https://code.highcharts.com/highcharts.js",
+        body: true,
+      },
+      {
+        src: "https://code.highcharts.com/modules/accessibility.js",
+        body: true,
+      },
     ],
     meta: [
       { charset: 'utf-8' },

@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build --output public",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "start": "nuxt start"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/vercel-builder": "^0.22.1",
     "core-js": "^3.19.3",
+    "express": "^4.18.1",
     "highcharts": "^10.1.0",
     "nuxt": "^2.15.8",
     "vue": "^2.6.14",

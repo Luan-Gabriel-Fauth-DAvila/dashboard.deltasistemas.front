@@ -11,7 +11,15 @@
                     <label for="">Data Fim</label>
                     <input type="date" id="data_fim">
                 </div>
-                <button @click="defData" id="buttom_filter">Aplicar</button>
+                <div>
+                    <label for="">Agrupamento</label>
+                    <select id="agrupamento">
+                        <option v-for="agr in agrupamentos" :key="agr.codagrupamento" :value="agr.codagrupamento">{{ agr.dscagrupamento }}</option>
+                    </select>
+                </div>
+                <div>
+                    <button @click="defData" id="buttom_filter">Aplicar</button>
+                </div>
             </div>
             <div id="total_vendas">
                 <div>
@@ -97,7 +105,7 @@
                 <div>
                     <h2>Ranking de Vendas Por Cliente<label style="font-weight: normal;">Por Mês</label></h2>
                 </div>
-                <div>
+                <div :style="{ maxHeight: '28vh' }">
                     <!-- <div id="container_principal" v-for="(r, index) in rankingclientes_var" :key="index">
                         <div id='barra_total'>
                             <div id="barra_porcentagem" :style="{ backgroundColor: colors[index] ,width: tamanhoBarra(r.total_vendas, rankingclientes_sum) + '%' }">
@@ -141,8 +149,8 @@ export default {
     },              
     data () {
         return {
-            hostBack: 'http://127.0.0.1:8000',
-            hostFront: 'http://localhost:3000',
+            hostBack: 'http://192.168.100.3:8000',
+            hostFront: 'http://192.168.100.3:3000',
             rankingclientes_var: null,
             rankingclientes_total_vendas: null,
             rankingclientes_sum: 0,
@@ -163,6 +171,7 @@ export default {
             metadevendas_atual: null,
             heightDefined: 0,
 
+            agrupamentos: null,
             class_nav: 'deactive',
             url: ''
         }
@@ -201,7 +210,7 @@ export default {
                 const res_refresh = await req_refresh.json()
                 sessionStorage.setItem('access', res_refresh.access)
             }else{
-                window.location.href = this.hostFront+"/login/"
+                // window.location.href = this.hostFront+"/login/"
             }
         },
         defData () {
@@ -215,6 +224,12 @@ export default {
             const data_fim = urlParams.get('data_fim')
             const urlFilter = '?data_ini='+data_ini+'&data_fim='+data_fim
             return urlFilter
+        },
+        async getAgrupamentos () {
+            const req = await fetch(this.hostBack+'/agrupamentos/')
+            const res = await req.json()
+            
+            this.agrupamentos = res
         },
         navBar () {
             if (this.class_nav == 'deactive') {
@@ -471,6 +486,7 @@ export default {
     created () {
     },
     mounted () {
+        this.getAgrupamentos()
         this.heightDefine()
         setInterval(() => {
             this.heightDefine()

@@ -14,7 +14,10 @@
                         <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#aaaaaa;">Financeiro</a></div>
 
                         <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><a href="/painel/estoque/" id="menu_link">Estoque</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div>                    
+                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div>    
+
+                        <div id="div-menu_link" v-if="$route.path == '/painel/status/'"><a href="/painel/status/" id="menu_link">Status</a><div id="down-bar"></div></div>
+                        <div id="div-menu_link" v-else><a href="/painel/status/" id="menu_link" style="color:#aaaaaa;">Status</a></div>                    
                 </div>
             </div>
             <div id="perfil">

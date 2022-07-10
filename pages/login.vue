@@ -1,11 +1,11 @@
 <template> 
     <section id="login">
         <section id="login_info">
-            <img src="http://127.0.0.1:8000/static/public/login/image.png" alt="image" id="image">
-            <img src="http://127.0.0.1:8000/static/public/login/title.png" alt="title" id="title">
+            <img :src="hostBackEnd + '/static/public/login/image.png'" alt="image" id="image">
+            <img :src="hostBackEnd + '/static/public/login/title.png'" alt="title" id="title">
         </section>
         <section id="login_screen">
-            <img src="http://127.0.0.1:8000/static/public/delta-logo.png" alt="logo" id="delta_logo">
+            <img :src="hostBackEnd + '/static/public/delta-logo.png'" alt="logo" id="delta_logo">
             <form method="POST">
                 <input type="hidden" name="next" v-model="next">
                 <div class="input-field">
@@ -37,6 +37,8 @@ export default {
             password: '',
             remember: '',
             next: '',
+            hostBackEnd: 'http://192.168.100.3:8000',
+            hostFrontEnd: 'http://192.168.100.3:3000',
         }
     },
     methods: {
@@ -46,7 +48,7 @@ export default {
                 username: this.username,
                 password: this.password
             }
-            const req = await fetch('http://127.0.0.1:8000/jwt/create/',{
+            const req = await fetch(this.hostBackEnd+'/jwt/create/',{
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json'}
@@ -57,20 +59,19 @@ export default {
                 sessionStorage.setItem('access', res.access)
                 sessionStorage.setItem('refresh', res.refresh)
                 sessionStorage.setItem('username', this.username)
-                window.location.href = ('http://localhost:3000/painel/comercial/')
+                window.location.href = (this.hostFrontEnd+'/painel/comercial/')
             }
         },
         async verifyLogin () {
             try {
                 var token = sessionStorage.getItem('access')
             }catch (e) {
-                console.log(e.message)
                 var token = ''
             }
             let data = {
                 token: token
             }
-            const req = await fetch('http://127.0.0.1:8000/jwt/verify/',{
+            const req = await fetch(this.hostBackEnd+'/jwt/verify/',{
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json'}
@@ -81,12 +82,12 @@ export default {
                 let data = {
                     token: sessionStorage.getItem('refresh')
                 }
-                const req = await fetch('http://127.0.0.1:8000/jwt/verify/',{
+                const req = await fetch(this.hostBackEnd+'/jwt/verify/',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: {'Content-Type': 'application/json'}
                 })
-                window.location.href = ('http://localhost:3000/painel/comercial/')
+                window.location.href = (this.hostFrontEnd+'/painel/comercial/')
             }
         }
     },

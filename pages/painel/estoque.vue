@@ -70,7 +70,7 @@ export default {
     },
     data () {
         return {
-            hostBackEnd: 'http://127.0.0.1:8000',
+            hostBackEnd: 'http://192.168.100.3:8000',
             colors: [
                 '#c438ef',
                 '#05cd99',
