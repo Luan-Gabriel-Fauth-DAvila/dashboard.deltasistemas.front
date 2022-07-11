@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Navbar />
+        <Navbar :hostBack="hostBack" />
         <section id="painel">
             <div id="filter">
                 <div>

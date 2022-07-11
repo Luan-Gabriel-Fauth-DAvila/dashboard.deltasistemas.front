@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Navbar />
+        <Navbar :hostBack="hostBack" />
         <div id="painel">
             <div id="prod_em_estoque">                        
                 <div>
@@ -70,7 +70,7 @@ export default {
     },
     data () {
         return {
-            hostBackEnd: 'http://188.166.65.228:8000',
+            hostBack: 'http://188.166.65.228:8000',
             colors: [
                 '#c438ef',
                 '#05cd99',

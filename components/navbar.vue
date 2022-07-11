@@ -4,7 +4,7 @@
             <div id="nav-desktop">
             <div id="nav-left">
                 <div id="image">
-                    <img src="http://127.0.0.1:8000/static/public/logo-oxi.png" alt="logo" id="image_logo">
+                    <img :src="hostBack+ '/static/public/logo-oxi.png'" alt="logo" id="image_logo">
                 </div>
                 <div id="menu">
                         <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><a href="/painel/comercial/" id="menu_link">Comercial</a><div id="down-bar"></div></div>
@@ -22,7 +22,7 @@
             </div>
             <div id="perfil">
                 <label>{{ user }}</label>
-                <img src="http://127.0.0.1:8000/static/public/perfil_default.png" alt="" id="menu_perfil">
+                <img :src="hostBack+'/static/public/perfil_default.png'" alt="" id="menu_perfil">
             </div>
             </div>
 
@@ -47,10 +47,10 @@
                     </div>
                 </div>
                 <div id="image">
-                    <img src="http://127.0.0.1:8000/static/public/logo-oxi.png" alt="logo" id="image_logo">
+                    <img :src="hostBack+'/static/public/logo-oxi.png'" alt="logo" id="image_logo">
                 </div>
                 <div id="perfil">
-                    <img src="http://127.0.0.1:8000/static/public/perfil_default.png" alt="" id="menu_perfil">
+                    <img :src="hostBack+'/static/public/perfil_default.png'" alt="" id="menu_perfil">
                     <label>{{ user }}</label>
                 </div>
             </div>
@@ -64,8 +64,10 @@ export default {
     data () {
         return {
             user: null,
-
         }
+    },
+    props: {
+        hostBack: String,
     },
     methods: {
         getUsername () {

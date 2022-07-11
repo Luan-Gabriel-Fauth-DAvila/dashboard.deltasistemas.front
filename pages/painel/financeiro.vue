@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Navbar />
+        <Navbar :hostBack="hostBack" />
         <section id="painel">
             <!-- <div id="filter">
                 <div>
@@ -20,18 +20,18 @@
                 <div id="banco_data">
                     <div id="banco_total">
                         <label>Total</label>
-                        <img src="http://127.0.0.1:8000/static/public/bancos/wallet.svg" :style="{ width: '12vh' }" alt="">
+                        <img :src="hostBack+'/static/public/bancos/wallet.svg'" :style="{ width: '12vh' }" alt="">
                         <h6 v-if="saldoDisponivelEmContas_sum">{{ moneyFilter(saldoDisponivelEmContas_sum) }}</h6>
                         <h6 v-else>Sem Dados</h6>
                     </div>
                     <div id="banco" v-for="(c, index) in saldoDisponivelEmContas_var" :key="index">
                         <label>{{ c.nome_banco.toLowerCase() }}</label>
-                        <img v-if="c.banco === '1'" src="http://127.0.0.1:8000/static/public/bancos/bb.png" :style="{ width: '11vh' }" alt="">
-                        <img v-else-if="c.banco === '260'" src="http://127.0.0.1:8000/static/public/bancos/nu.png" :style="{ width: '11vh' }" alt="">
-                        <img v-else-if="c.banco === '33'" src="http://127.0.0.1:8000/static/public/bancos/santander.svg" :style="{ width: '11vh' }" alt="">
-                        <img v-else-if="c.banco === '748'" src="http://127.0.0.1:8000/static/public/bancos/sicredi.svg" :style="{ width: '11vh' }" alt="">
-                        <img v-else-if="c.banco === '756'" src="http://127.0.0.1:8000/static/public/bancos/sicoob.svg" :style="{ width: '11vh' }" alt="">
-                        <img v-else src="http://127.0.0.1:8000/static/public/bancos/wallet.svg" :style="{ width: '12vh' }" alt="">
+                        <img v-if="c.banco === '1'" :src="hostBack+'/static/public/bancos/bb.png'" :style="{ width: '11vh' }" alt="">
+                        <img v-else-if="c.banco === '260'" :src="hostBack+'/static/public/bancos/nu.png'" :style="{ width: '11vh' }" alt="">
+                        <img v-else-if="c.banco === '33'" :src="hostBack+'/static/public/bancos/santander.svg'" :style="{ width: '11vh' }" alt="">
+                        <img v-else-if="c.banco === '748'" :src="hostBack+'/static/public/bancos/sicredi.svg'" :style="{ width: '11vh' }" alt="">
+                        <img v-else-if="c.banco === '756'" :src="hostBack+'/static/public/bancos/sicoob.svg'" :style="{ width: '11vh' }" alt="">
+                        <img v-else :src="hostBack+'/static/public/bancos/wallet.svg'" :style="{ width: '12vh' }" alt="">
                         <label>{{ moneyFilter(c.valor) }}</label>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ export default {
     }, 
     data () {
         return {
-            hostBackEnd: 'http://188.166.65.228:8000',
+            hostBack: 'http://188.166.65.228:8000',
             colors: [
                 '#c438ef',
                 '#05cd99',
