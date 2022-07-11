@@ -94,7 +94,7 @@ export default {
         },
 
         async qtdCilindrosCheios () {
-            const req = await fetch(this.hostBackEnd+'/qtd_cilindros_cheios')
+            const req = await fetch(this.hostBack+'/qtd_cilindros_cheios')
             const res = await req.json()
 
             self.cilindros_cheios_value = res.qtd[0]
@@ -102,7 +102,7 @@ export default {
         },
 
         async ticketMedioDeCompra () {
-            const req = await fetch(this.hostBackEnd+'/ticket_medio_de_compra')
+            const req = await fetch(this.hostBack+'/ticket_medio_de_compra')
             const res = await req.json()
             
             if (res[0].media_compras != 'None') {
@@ -111,7 +111,7 @@ export default {
         },
 
         async valorDeTodosOsProdutos () {
-            const req = await fetch(this.hostBackEnd+'/total_de_valores_de_todos_os_produtos')
+            const req = await fetch(this.hostBack+'/total_de_valores_de_todos_os_produtos')
             const res = await req.json()
             
             self.prod_em_estoque_value.innerHTML = res.quantidade
@@ -119,7 +119,7 @@ export default {
         },
 
         async rankingComprasPorFornecedor () {
-            const req = await fetch(this.hostBackEnd+'/ranking_compras_por_fornecedor')
+            const req = await fetch(this.hostBack+'/ranking_compras_por_fornecedor')
             const res = await req.json()
 
             const formaRecebimentoTitle = res.nome
@@ -160,7 +160,7 @@ export default {
         },
 
         async rankingProdutoMaisComprado () {
-            const req = await fetch(this.hostBackEnd+'/ranking_produto_mais_comprado')
+            const req = await fetch(this.hostBack+'/ranking_produto_mais_comprado')
             const res = await req.json()
 
             const formaRecebimentoTitle = res.dscproduto
