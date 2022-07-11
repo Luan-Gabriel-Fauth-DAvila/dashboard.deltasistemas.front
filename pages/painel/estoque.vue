@@ -71,6 +71,7 @@ export default {
     data () {
         return {
             hostBack: 'http://188.166.65.228:8000',
+            hostFront: 'http://188.166.65.228:3000',
             colors: [
                 '#c438ef',
                 '#05cd99',

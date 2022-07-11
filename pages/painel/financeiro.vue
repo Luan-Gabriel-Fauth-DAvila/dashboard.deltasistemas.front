@@ -139,6 +139,7 @@ export default {
     data () {
         return {
             hostBack: 'http://188.166.65.228:8000',
+            hostFront: 'http://188.166.65.228:3000',
             colors: [
                 '#c438ef',
                 '#05cd99',
@@ -181,7 +182,7 @@ export default {
         defData () {
             const ini = self.data_ini.value.split('-', 3)
             const fim = self.data_fim.value.split('-', 3)
-            window.location.href = ('http://localhost:3000/painel/financeiro/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
+            window.location.href = (this.hostFront+'/painel/comercial/financeiro/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
         },
         defFilter () {
             const urlParams = new URLSearchParams(window.location.search);
