@@ -168,7 +168,7 @@ export default {
         },
 
         async saldoDisponivelEmContas () {
-            const req = await fetch(this.hostBackEnd+'/saldo_disponivel_em_contas')
+            const req = await fetch(this.hostBack+'/saldo_disponivel_em_contas')
             const res = await req.json()
 
             this.saldoDisponivelEmContas_var = res
@@ -192,35 +192,35 @@ export default {
         },
 
         async contasReceberAtrasadas () {
-            const req = await fetch(this.hostBackEnd+'/contas_a_receber_do_inicio_ate_a_data_atual')
+            const req = await fetch(this.hostBack+'/contas_a_receber_do_inicio_ate_a_data_atual')
             const res = await req.json()
             
             self.cr_atrasado_value.innerHTML = this.moneyFilter(res.faturas_receber)
         },
 
         async contasReceberAVencer () {
-            const req = await fetch(this.hostBackEnd+'/contas_a_receber_a_partir_da_data_atual')
+            const req = await fetch(this.hostBack+'/contas_a_receber_a_partir_da_data_atual')
             const res = await req.json()
 
             self.cr_vencer_value.innerHTML = this.moneyFilter(res.faturas_receber)
         },
 
         async contasPagarAtrasadas () {
-            const req = await fetch(this.hostBackEnd+'/contas_a_pagar_do_inicio_ate_a_data_atual')
+            const req = await fetch(this.hostBack+'/contas_a_pagar_do_inicio_ate_a_data_atual')
             const res = await req.json()
             
             self.cp_atrasado_value.innerHTML = this.moneyFilter(res.faturas_pagar)
         },
 
         async contasPagarAVencer () {
-            const req = await fetch(this.hostBackEnd+'/contas_a_pagar_a_partir_da_data_atual')
+            const req = await fetch(this.hostBack+'/contas_a_pagar_a_partir_da_data_atual')
             const res = await req.json()
 
             self.cp_vencer_value.innerHTML = this.moneyFilter(res.faturas_pagar)
         },
 
         async contasReceber () {
-            const req = await fetch(this.hostBackEnd+'/contas_a_receber_por_ranking_e_dia')
+            const req = await fetch(this.hostBack+'/contas_a_receber_por_ranking_e_dia')
             const res = await req.json()
 
             let parceiro = []
@@ -268,7 +268,7 @@ export default {
         },
 
         async contasPagar () {
-            const req = await fetch(this.hostBackEnd+'/contas_a_pagar_por_ranking_e_dia')
+            const req = await fetch(this.hostBack+'/contas_a_pagar_por_ranking_e_dia')
             const res = await req.json()
 
             let parceiro = []
@@ -319,7 +319,7 @@ export default {
         },
 
         async recebimentosPorForma () {
-            const req = await fetch(this.hostBackEnd+'/total_de_recebimentos_por_forma_mensal/resumo_geral')
+            const req = await fetch(this.hostBack+'/total_de_recebimentos_por_forma_mensal/resumo_geral')
             const res = await req.json()
 
             const formaRecebimentoTitle = [
@@ -373,7 +373,7 @@ export default {
         },
 
         async detalhesFinaciamentoEmprestimo () {
-            const req = await fetch(this.hostBackEnd+'/detalhes_finaciamento')
+            const req = await fetch(this.hostBack+'/detalhes_finaciamento')
             const res = await req.json()
             
             this.detalhesFinaciamentoEmprestimo_var = res
@@ -387,7 +387,7 @@ export default {
         },
 
         async fluxoDeCaixa () {
-            const req = await fetch(this.hostBackEnd+'/fluxo_de_caixa')
+            const req = await fetch(this.hostBack+'/fluxo_de_caixa')
             const res = await req.json()
 
             const total_vendas_mensal_chart = Highcharts.chart('fluxo_20_dias_chart', {
