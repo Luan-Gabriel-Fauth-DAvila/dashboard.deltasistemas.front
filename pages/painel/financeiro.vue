@@ -138,8 +138,8 @@ export default {
     }, 
     data () {
         return {
-            hostBack: 'http://188.166.65.228:8000',
-            hostFront: 'http://188.166.65.228:3000',
+            hostBack: process.env.HOST_BACK,
+            hostFront: process.env.HOST_FRONT,
             colors: [
                 '#c438ef',
                 '#05cd99',
