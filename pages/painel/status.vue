@@ -11,7 +11,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th id="numnota">Num Nota</th>
+                                <th id="numnota">Nº Nota</th>
                                 <th id="status">Status</th>
                                 <th id="erro">Erro</th>
                             </tr>
@@ -24,6 +24,17 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <div id="certificado_digital">
+                <div id="title">
+                    <h2>Validade do Certificado Digital</h2>
+                </div>
+                <div id="content">
+                    <h4 v-for="valid in validadeCertificadoDigital" :key='valid.codfilial'>
+                        <h4><b>Valido até:</b> {{ valid.vencimento }}</h4>
+                        <h4><b>Filial:</b> {{ valid.codfilial }}</h4>
+                    </h4>
                 </div>
             </div>
         </section>
@@ -39,8 +50,22 @@ export default {
     },
     data () {
         return {
-            hostBack: 'http://188.166.65.228:8000',
+            // hostBack: 'http://188.166.65.228:8000',
+            // hostFront: 'http://188.166.65.228:3000',
+            hostBack: 'http://127.0.0.1:8000',
+            hostFront: 'http://127.0.0.1:3000',
             notasnaoemitidas: null,
+            validadeCertificadoDigital: null,
+        }
+    },
+    head() {
+        return {
+            script: [
+                {src: 'https://cdn.jsdelivr.net/npm/chart.js'},
+                {src: "https://code.highcharts.com/highcharts.js",body: true},
+                {src: "https://code.highcharts.com/modules/accessibility.js",body: true},
+                {href: "", rel:"stylesheet", integrity:"sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO", crossorigin:"anonymous"}
+            ]
         }
     },
     methods: {
@@ -49,19 +74,27 @@ export default {
             const res = await req.json()
 
             this.notasnaoemitidas = res
+        },
+        async certificadoDigital() {
+            const req = await fetch(this.hostBack+'/certificado_digital')
+            const res = await req.json()
+
+            this.validadeCertificadoDigital = res
         }
     },
     mounted() {
         this.funcNotasNaoEmitidas()
+        this.certificadoDigital()
         setInterval(() => {
             this.funcNotasNaoEmitidas()
+            this.certificadoDigital()
         }, 30000)
     }
     
 }
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 * {
     margin: 0;
@@ -71,7 +104,7 @@ export default {
     font-family: 'Poppins', sans-serif;
 }
 html,body {
-    background-color: #eeeeee;
+    background-color: #eeeeee !important;
 }
 small {
     line-height: 2.5vh;
@@ -102,6 +135,7 @@ h2 {
 }
 h4 {
     line-height: 2.5vh;
+    font-weight: 100;
 }
 h6 {
     margin-left: 1vh;
@@ -112,7 +146,7 @@ h6 {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
     grid-template-rows: 15vh 15vh 45vh 25vh 40vh 40vh;
-    grid-template-areas:    "notas_nao_emitidas notas_nao_emitidas filter filter"
+    grid-template-areas:    "notas_nao_emitidas notas_nao_emitidas certificado_digital certificado_digital"
                             "notas_nao_emitidas notas_nao_emitidas total_lucro_bruto valor_em_locacao"
                             "notas_nao_emitidas notas_nao_emitidas total_vendas_por_agrupamento total_vendas_por_agrupamento"
                             "meta_de_vendas meta_de_vendas ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor"
@@ -159,8 +193,13 @@ h6 {
     z-index: 0;
 }
 table, th, td {
-    border: 1px solid rgb(160, 160, 160);
     border-collapse: collapse;
+}
+thead tr {
+    border-bottom: 1.5px solid #a8afd0;
+}
+tbody tr {
+    border-bottom: 1px solid #a8afd0;
 }
 #notas_nao_emitidas #title {
     grid-area: title;
@@ -179,5 +218,18 @@ table, th, td {
 #notas_nao_emitidas #content #erro {
     text-align: center;
     width: 20vw;
+}
+#certificado_digital {
+    grid-area: certificado_digital;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff;
+    padding: 2vh 2vh;
+    margin: 2vh;
+    border-radius: .5vh;
+    color: #1B2559;
+    z-index: 0;
 }
 </style>

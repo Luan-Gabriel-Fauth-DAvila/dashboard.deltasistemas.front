@@ -1,20 +1,23 @@
 <template> 
     <section id="login">
         <section id="login_info">
-            <img :src="hostBackEnd + '/static/public/login/image.png'" alt="image" id="image">
-            <img :src="hostBackEnd + '/static/public/login/title.png'" alt="title" id="title">
+            <img :src="hostBack + '/static/public/login/image.png'" alt="image" id="image">
+            <img :src="hostBack + '/static/public/login/title.png'" alt="title" id="title">
         </section>
         <section id="login_screen">
-            <img :src="hostBackEnd + '/static/public/delta-logo.png'" alt="logo" id="delta_logo">
+            <img :src="hostBack + '/static/public/delta-logo.png'" alt="logo" id="delta_logo">
             <form method="POST">
                 <input type="hidden" name="next" v-model="next">
+                <div v-show="validLogin" class="input-field">
+                    <p id="incorrect_pass">Email ou Usuário inválido</p>
+                </div>
                 <div class="input-field">
                     <p for="username">Email ou Usuário</p>
                     <input type="text" id="username" name="username" placeholder=" seuemail@email.com" v-model="username">
                 </div>
                 <div class="input-field">
                     <p for="password">Senha</p>
-                    <input type="password" name="password" autocomplete='false' v-model="password">
+                    <input type="password"  id="password" name="password" autocomplete='false' v-model="password">
                 </div>
                 <div class="checkbox-field">
                     <input type="checkbox" id="checkbox" v-model="remember">
@@ -37,8 +40,11 @@ export default {
             password: '',
             remember: '',
             next: '',
-            hostBackEnd: 'http://188.166.65.228:8000',
-            hostFrontEnd: 'http://188.166.65.228:3000',
+            // hostBack: 'http://188.166.65.228:8000',
+            // hostFront: 'http://188.166.65.228:3000',
+            hostBack: 'http://127.0.0.1:8000',
+            hostFront: 'http://127.0.0.1:3000',
+            validLogin: null
         }
     },
     methods: {
@@ -48,7 +54,7 @@ export default {
                 username: this.username,
                 password: this.password
             }
-            const req = await fetch(this.hostBackEnd+'/jwt/create/',{
+            const req = await fetch(this.hostBack+'/jwt/create/',{
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json'}
@@ -59,7 +65,13 @@ export default {
                 sessionStorage.setItem('access', res.access)
                 sessionStorage.setItem('refresh', res.refresh)
                 sessionStorage.setItem('username', this.username)
-                window.location.href = (this.hostFrontEnd+'/painel/comercial/')
+                this.validLogin = false
+                // console.log(sessionStorage.getItem('access'))
+                window.location.href = (this.hostFront+'/painel/comercial/')
+            }else {
+                this.validLogin = true;
+                // this.username = '';
+                this.password = ''
             }
         },
         async verifyLogin () {
@@ -71,7 +83,7 @@ export default {
             let data = {
                 token: token
             }
-            const req = await fetch(this.hostBackEnd+'/jwt/verify/',{
+            const req = await fetch(this.hostBack+'/jwt/verify/',{
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json'}
@@ -82,12 +94,12 @@ export default {
                 let data = {
                     token: sessionStorage.getItem('refresh')
                 }
-                const req = await fetch(this.hostBackEnd+'/jwt/verify/',{
+                const req = await fetch(this.hostBack+'/jwt/verify/',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: {'Content-Type': 'application/json'}
                 })
-                window.location.href = (this.hostFrontEnd+'/painel/comercial/')
+                window.location.href = (this.hostFront+'/painel/comercial/')
             }
         }
     },
@@ -200,6 +212,13 @@ form {
     width: 100%;
     height: 30%;
     margin-bottom: 35%;
+}
+#incorrect_pass {
+    color: #fff ; 
+    border: 1px solid #fff; 
+    border-radius: 2vh;
+    line-height: 5vh;
+    text-align: center;
 }
 .input-field {
     display: flex;

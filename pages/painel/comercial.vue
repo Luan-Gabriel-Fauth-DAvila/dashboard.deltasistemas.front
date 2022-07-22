@@ -149,8 +149,10 @@ export default {
     },              
     data () {
         return {
-            hostBack: 'http://188.166.65.228:8000',
-            hostFront: 'http://188.166.65.228:3000',
+            // hostBack: 'http://188.166.65.228:8000',
+            // hostFront: 'http://188.166.65.228:3000',
+            hostBack: 'http://127.0.0.1:8000',
+            hostFront: 'http://127.0.0.1:3000',
             rankingclientes_var: null,
             rankingclientes_total_vendas: null,
             rankingclientes_sum: 0,
@@ -173,7 +175,8 @@ export default {
 
             agrupamentos: null,
             class_nav: 'deactive',
-            url: ''
+            url: '',
+            teste: 'teste',
         }
     },
     props: {
@@ -187,8 +190,13 @@ export default {
             }
         },
         async verifyLogin () {
+            try {
+                var token = sessionStorage.getItem('access')
+            }catch (e) {
+                var token = ''
+            }
             let data = {
-                "token": sessionStorage.getItem("access")
+                token: token
             }
             const req = await fetch(this.hostBack+'/jwt/verify/', {
                 method: 'POST',
