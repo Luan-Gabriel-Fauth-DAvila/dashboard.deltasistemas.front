@@ -138,7 +138,7 @@ export default {
     components: {
         Navbar,
     },
-    head() {
+    head () {
         return {
             script: [
                 {src: 'https://cdn.jsdelivr.net/npm/chart.js'},

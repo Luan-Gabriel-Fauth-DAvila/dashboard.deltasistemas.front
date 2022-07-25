@@ -1,5 +1,6 @@
 <template>
     <div>
+        
         <Navbar :hostBack="hostBack" />
         <div id="painel">
             <div id="prod_em_estoque">                        
@@ -38,7 +39,7 @@
                 <div id="mapa-title">
                     <h2>Mapa Locações</h2>
                 </div> 
-                <div id="mapa-img" style="background-image: url('http://127.0.0.1:8000/static/public/map-lock.png');"></div>
+                <div id="map">{{ latlon }}</div>
             </div>
             <div id="ranking_compra_por_forn">            
                 <div>
@@ -68,6 +69,16 @@ export default {
     components: {
         Navbar,
     },
+    head () {
+        return {
+            script: [
+                {src: 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'},
+            ],
+            link: [
+                { rel: 'stylesheet', type: '', href: 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.css' },
+            ]
+        }
+    },
     data () {
         return {
             hostBack: process.env.HOST_BACK,
@@ -81,6 +92,7 @@ export default {
                 '#6452ff',
                 '#05cd99',
             ],
+            latlon: ''
         }
     },
     methods: {
@@ -119,6 +131,46 @@ export default {
             self.vlr_prod_em_estoque_value.innerHTML = this.moneyFilter(res.valor_total)
         },
 
+        async map() {
+            const req_con = await fetch(this.hostBack+'/condicionais_abertas/')
+            const res_con = await req_con.json()
+            const req = await fetch(this.hostBack+'/mapa_de_locacoes/')
+            const res = await req.json()
+
+            var map = L.map('map').setView([res_con[0].lat, res_con[0].lon], 13);
+            var myIcon = L.icon({
+                iconUrl: '/mapicon.png',
+                iconSize: [60, 60],
+                iconAnchor: [30, 60],
+                popupAnchor: [0, -60],
+            });
+            for (let i = 0; i < res_con.length; i++) {
+                // let cond = res.filter((res) => {return res['numcondicional'] == res_con[i]['numcondicional'] })
+                // console.log(cond)
+                L.marker([res_con[i].lat, res_con[i].lon],{icon: myIcon, alt: ''}).addTo(map).bindPopup(`
+                <div style="display: grid; grid-template-columns: 100%; grid-template-rows: 30px 180px 180px 90px; grid-template-areas: 'title' 'content' 'result'">
+                    <div style="grid-area: title; line-height: 30px; font-size: 8px;">Data de Locação 01/05/2021</div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                        <p style='font-weight: 800;'>`+res[0].nome+`</p>
+                        <p>R$ 250,25</p>
+                    </div>
+                </div>
+                `);
+                // L.marker([res_con[3].lat, res_con[3].lon],{icon: myIcon, alt: ''}).addTo(map).bindPopup(`
+                // <div style="display: grid; grid-template-columns: 100%; grid-template-rows: 30px 180px 180px 90px; grid-template-areas: 'title' 'content' 'result'">
+                //     <div style="grid-area: title; line-height: 30px; font-size: 8px;">Data de Locação 01/05/2021</div>
+                //     <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                //         <p style='font-weight: 800;'>`+res[3].nome+`</p>
+                //         <p>R$ 250,25</p>
+                //     </div>
+                // </div>
+                // `);
+            }
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+        },
         async rankingComprasPorFornecedor () {
             const req = await fetch(this.hostBack+'/ranking_compras_por_fornecedor')
             const res = await req.json()
@@ -202,6 +254,7 @@ export default {
         }
     },
     mounted () {
+        this.map()
         this.ticketMedioDeCompra()
         this.valorDeTodosOsProdutos()
         this.rankingComprasPorFornecedor()
@@ -348,12 +401,24 @@ label {
     background-size: cover;
     background-position: center;
 }
-#mapa-title {
-    margin-bottom: 2vh;
+#map { 
+    height: 70vh; 
+}
+.leaflet-popup-tip {
+    background-color: #6b7ff3;
+}
+.leaflet-popup-content-wrapper {
+    background-color: transparent;
+    box-shadow: unset;
+    background-image: url('/estoque/map_popup_bg.svg');
+    background-position: center;
+    background-size: cover;
+    width: 300px;
+    height: 250px;
 }
 #ranking_compra_por_forn {
     grid-area: ranking_compra_por_forn;
-    color: #1B2559;
+    color: #1B2559 !important;
     background-color: white;
     margin: 2vh;
     border-radius: 2vh;
