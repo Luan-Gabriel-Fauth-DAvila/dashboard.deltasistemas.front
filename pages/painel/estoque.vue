@@ -39,7 +39,7 @@
                 <div id="mapa-title">
                     <h2>Mapa Locações</h2>
                 </div> 
-                <div id="map">{{ latlon }}</div>
+                <div id="map"></div>
             </div>
             <div id="ranking_compra_por_forn">            
                 <div>
@@ -419,7 +419,7 @@ label {
 .leaflet-popup-content-wrapper {
     background-color: transparent;
     box-shadow: unset;
-    background-image: url('/estoque/map_popup_bg.svg');
+    background-image: url('http://188.166.65.228:8000/static/public/estoque/map_popup_bg.svg');
     background-position: center;
     background-size: cover;
     width: 300px;
