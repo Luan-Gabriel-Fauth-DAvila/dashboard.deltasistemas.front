@@ -145,26 +145,39 @@ export default {
                 popupAnchor: [0, -60],
             });
             for (let i = 0; i < res_con.length; i++) {
-                // let cond = res.filter((res) => {return res['numcondicional'] == res_con[i]['numcondicional'] })
-                // console.log(cond)
+                let cond = res.filter((res) => {return res['numcondicional'] == res_con[i]['numcondicional'] })
+                console.log(cond)
+                let itens = ''
+                cond.forEach((c) => {
+                    itens = itens + `
+                    <tr>
+                        <td id="produto">`+c.dscproduto+`</td>
+                        <td id="qtd_locada">`+c.qtd_locada+`</td>
+                    </tr>
+                    `
+                })
+                // console.log(itens)
                 L.marker([res_con[i].lat, res_con[i].lon],{icon: myIcon, alt: ''}).addTo(map).bindPopup(`
-                <div style="display: grid; grid-template-columns: 100%; grid-template-rows: 30px 180px 180px 90px; grid-template-areas: 'title' 'content' 'result'">
-                    <div style="grid-area: title; line-height: 30px; font-size: 8px;">Data de Locação 01/05/2021</div>
-                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
-                        <p style='font-weight: 800;'>`+res[0].nome+`</p>
-                        <p>R$ 250,25</p>
+                <div id='popupPointMap'>
+                    <div id="date">Data de Locação 01/05/2021</div>
+                    <p id='title'>`+res_con[i].nome+`</p>
+                    <table id='product'>
+                        <thead>
+                            <tr>
+                                <th id="produto">Produto</th>
+                                <th id="qtd_locada">Qtd</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            `+itens+`
+                        </tbody>
+                    </table>
+                    <div id='result'>
+                        <p>Valor Total:</p>
+                        <p>250</p>
                     </div>
                 </div>
                 `);
-                // L.marker([res_con[3].lat, res_con[3].lon],{icon: myIcon, alt: ''}).addTo(map).bindPopup(`
-                // <div style="display: grid; grid-template-columns: 100%; grid-template-rows: 30px 180px 180px 90px; grid-template-areas: 'title' 'content' 'result'">
-                //     <div style="grid-area: title; line-height: 30px; font-size: 8px;">Data de Locação 01/05/2021</div>
-                //     <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
-                //         <p style='font-weight: 800;'>`+res[3].nome+`</p>
-                //         <p>R$ 250,25</p>
-                //     </div>
-                // </div>
-                // `);
             }
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
@@ -393,16 +406,12 @@ label {
     border-radius: 2vh;
     padding: 2vh 2vh;
 }
-#mapa-img {
-    width: 90%;
-    height: 90%;
-    border-radius: 2vh;
-    margin: auto auto;
-    background-size: cover;
-    background-position: center;
+#mapa-title {
+    margin-bottom: 1vh;
 }
 #map { 
-    height: 70vh; 
+    height: 69vh; 
+    border-radius: 2vh;
 }
 .leaflet-popup-tip {
     background-color: #6b7ff3;
@@ -431,5 +440,60 @@ label {
     margin: 2vh;
     border-radius: 2vh;
     padding: 2vh 2vh;
+}
+
+#popupPointMap {
+    display: grid; 
+    grid-template-columns: 100%; 
+    grid-template-rows: 25px 85px 85px 40px; 
+    grid-template-areas: 'date' 'title' 'product' 'result';
+
+    color: #1B2559;
+    z-index: 0;
+}
+table, th, td {
+    border-collapse: collapse;
+}
+thead tr {
+    border-bottom: 1.5px solid #a8afd0;
+}
+tbody tr {
+    border-bottom: 1px solid #a8afd0;
+}
+#popupPointMap #date {
+    grid-area: date; 
+    line-height: 30px; 
+    font-size: 8px;
+}
+#popupPointMap #title {
+    grid-area: title; 
+    font-weight: 800;
+}
+#popupPointMap #product {
+    grid-area: product;
+
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+}
+#popupPointMap #result {
+    grid-area: result;
+
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+
+    color: #fff;
+}
+#popupPointMap #product #produto {
+    text-align: left;
+    width: 22vw;    
+    font-size: 1.7vh;
+}
+#popupPointMap #product #qtd_locada {
+    text-align: center;
+    width: 4vw;
+    font-size: 1.7vh;
 }
 </style>

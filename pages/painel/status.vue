@@ -28,10 +28,10 @@
             </div>
             <div id="certificado_digital">
                 <div id="title">
-                    <h2>Validade do Certificado Digital</h2>
+                    <h2>Certificado Digital</h2>
                 </div>
                 <div id="content">
-                    <h4 v-for="valid in validadeCertificadoDigital" :key='valid.codfilial'>
+                    <h4 v-for="valid in CertificadoDigital" :key='valid.codfilial'>
                         <h4><b>Valido até:</b> {{ valid.vencimento }}</h4>
                         <h4><b>Filial:</b> {{ valid.codfilial }}</h4>
                     </h4>
@@ -53,7 +53,7 @@ export default {
             hostBack: process.env.HOST_BACK,
             hostFront: process.env.HOST_FRONT,
             notasnaoemitidas: null,
-            validadeCertificadoDigital: null,
+            CertificadoDigital: null,
         }
     },
     head() {
@@ -77,7 +77,7 @@ export default {
             const req = await fetch(this.hostBack+'/certificado_digital')
             const res = await req.json()
 
-            this.validadeCertificadoDigital = res
+            this.CertificadoDigital = res
         }
     },
     mounted() {
