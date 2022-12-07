@@ -56,41 +56,33 @@ export default {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json'}
-            })
-            const res = await req.json()
-            
+            })            
             if (req.status == '200') {
+                const res = await req.json()
                 sessionStorage.setItem('access', res.access)
                 sessionStorage.setItem('refresh', res.refresh)
                 sessionStorage.setItem('username', this.username)
-                this.validLogin = false
-                // console.log(sessionStorage.getItem('access'))
+                this.validLogin = true
                 window.location.href = (this.hostFront+'/painel/comercial/')
             }else {
-                this.validLogin = true;
-                // this.username = '';
+                this.validLogin = false;
+                this.username = '';
                 this.password = ''
             }
         },
         async verifyLogin () {
-            try {
-                var token = sessionStorage.getItem('access')
-            }catch (e) {
-                var token = ''
-            }
-            let data = {
-                token: token
-            }
-            const req = await fetch(this.hostBack+'/jwt/verify/',{
+            const req = await fetch(this.hostBack+'/jwt/refresh/',{
                 method: 'POST',
-                body: JSON.stringify(data),
+                body: JSON.stringify({
+                    refresh: sessionStorage.getItem('refresh')
+                }),
                 headers: {'Content-Type': 'application/json'}
             })
             const res = await req.json()
             
             if (req.status == '200') {
                 let data = {
-                    token: sessionStorage.getItem('refresh')
+                    refresh: sessionStorage.getItem('refresh')
                 }
                 const req = await fetch(this.hostBack+'/jwt/verify/',{
                     method: 'POST',

@@ -46,7 +46,7 @@
                 <span class="material-icons-outlined">payments</span>
                 <div>
                     <label>Valor em locação</label>
-                    <h4>Sem dados</h4>
+                    <h4 id="total_valor_em_locacao">Sem dados</h4>
                 </div>
             </div>
             <div id="total_vendas_mensal">
@@ -188,34 +188,14 @@ export default {
             }
         },
         async verifyLogin () {
-            try {
-                var token = sessionStorage.getItem('access')
-            }catch (e) {
-                var token = ''
-            }
-            let data = {
-                token: token
-            }
-            const req = await fetch(this.hostBack+'/jwt/verify/', {
+            const req = await fetch(this.hostBack+'/jwt/refresh/', {
                 method: 'POST',
-                body: JSON.stringify(data),
+                body: JSON.stringify({
+                    refresh: sessionStorage.getItem('refresh')
+                }),
                 headers: {"Content-type": "application/json"}
             })
-            const res = await req.json()
-
-
-            if (req.status == '200') {
-                let data = {
-                    "refresh": sessionStorage.getItem("refresh")
-                }
-                const req_refresh = await fetch(this.hostBack+'/jwt/refresh/', {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {"Content-type": "application/json"}
-                })
-                const res_refresh = await req_refresh.json()
-                sessionStorage.setItem('access', res_refresh.access)
-            }else{
+            if (req.status != '200') {
                 window.location.href = this.hostFront+"/login/"
             }
         },
@@ -272,6 +252,12 @@ export default {
             const req = await fetch(this.hostBack+'/lucro_bruto_mensal/'+this.defFilter())
             const res = await req.json()
             self.total_lucro_bruto_value.innerHTML = this.moneyFilter(res.valor_total)
+        },
+
+        async valorEmCondicional () {
+            const req = await fetch(this.hostBack+'/cilindros_em_condicionais/total_em_condicional/'+this.defFilter())
+            const res = await req.json()
+            self.total_valor_em_locacao.innerHTML = this.moneyFilter(res.total)
         },
         
         async valorVendasMensais () {
@@ -506,9 +492,11 @@ export default {
         this.valorVendasPorAgrupamento()
         this.rankingVendasPorCliente()
         this.produtosMaisVendidos()
+        this.valorEmCondicional()
         
         this.verifyLogin()
         setInterval(() => {
+            this.valorEmCondicional()
             this.valorVendas()
             this.valorCMV()
             this.valorLucroBrutoMensal()

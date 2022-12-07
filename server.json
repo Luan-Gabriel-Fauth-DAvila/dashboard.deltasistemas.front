@@ -1,6 +1,6 @@
 {
     "apps": [{
-        "name": "bi-oxipora-front",
+        "name": "dashboard-front",
         "script": "start",
         "args": ["run"],
         "exec_mode": "fork",
