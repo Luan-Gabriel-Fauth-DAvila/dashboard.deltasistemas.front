@@ -192,32 +192,17 @@ export default {
             return urlFilter
         },
 
-        async contasReceberAtrasadas () {
-            const req = await fetch(this.hostBack+'/contas_a_receber_do_inicio_ate_a_data_atual')
-            const res = await req.json()
+        async contasResumoGeral () {
+            const req = await fetch(this.hostBack+'/contas_resumo_geral')
+
+            if (req.status == 200) {
+                const res = await req.json()
+                self.cr_vencer_value.innerHTML = this.moneyFilter(res.contas_a_receber)
+                self.cr_atrasado_value.innerHTML = this.moneyFilter(res.contas_a_receber_atrasadas)
+                self.cp_vencer_value.innerHTML = this.moneyFilter(res.contas_a_pagar)
+                self.cp_atrasado_value.innerHTML = this.moneyFilter(res.contas_a_pagar_atrasadas)
+            }
             
-            self.cr_atrasado_value.innerHTML = this.moneyFilter(res.faturas_receber)
-        },
-
-        async contasReceberAVencer () {
-            const req = await fetch(this.hostBack+'/contas_a_receber_a_partir_da_data_atual')
-            const res = await req.json()
-
-            self.cr_vencer_value.innerHTML = this.moneyFilter(res.faturas_receber)
-        },
-
-        async contasPagarAtrasadas () {
-            const req = await fetch(this.hostBack+'/contas_a_pagar_do_inicio_ate_a_data_atual')
-            const res = await req.json()
-            
-            self.cp_atrasado_value.innerHTML = this.moneyFilter(res.faturas_pagar)
-        },
-
-        async contasPagarAVencer () {
-            const req = await fetch(this.hostBack+'/contas_a_pagar_a_partir_da_data_atual')
-            const res = await req.json()
-
-            self.cp_vencer_value.innerHTML = this.moneyFilter(res.faturas_pagar)
         },
 
         async contasReceber () {
@@ -326,14 +311,12 @@ export default {
             const formaRecebimentoTitle = [
                 'Recebimentos Cartão',
                 'Recebimentos em Dinheiro',
-                'Recebimentos',
                 'Cheques Recebidos',
                 'Entradas em Banco',
             ]
             const formaRecebimentosValue = [
                 res.rec_cartao,
                 res.rec_dinheiro,
-                res.recebimentos,
                 res.cheques_recebidos,
                 res.entradas_bancos,
             ]
@@ -429,10 +412,7 @@ export default {
     },
     mounted () {
         this.saldoDisponivelEmContas()
-        this.contasReceberAtrasadas()
-        this.contasReceberAVencer()
-        this.contasPagarAtrasadas()
-        this.contasPagarAVencer()
+        this.contasResumoGeral()
         this.contasReceber()
         this.contasPagar()
         this.recebimentosPorForma()
@@ -440,10 +420,7 @@ export default {
         this.fluxoDeCaixa()
         setInterval(() => {
             this.saldoDisponivelEmContas()
-            this.contasReceberAtrasadas()            
-            this.contasReceberAVencer()
-            this.contasPagarAtrasadas()
-            this.contasPagarAVencer()
+            this.contasResumoGeral()
             this.contasReceber()
             this.contasPagar()
             this.recebimentosPorForma()
