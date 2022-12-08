@@ -236,22 +236,15 @@ export default {
             const num = Math.floor(Math.random() * cores.length)
             return (cores[num])
         },
-        async valorVendas () {
-            const req = await fetch(this.hostBack+'/total_vendas/'+this.defFilter())
-            const res = await req.json()
-            self.total_vendas_value.innerHTML = this.moneyFilter(res.total_vendas)
-        },
 
-        async valorCMV () {
-            const req = await fetch(this.hostBack+'/total_cmv/'+this.defFilter())
-            const res = await req.json()
-            self.total_cmv_value.innerHTML = this.moneyFilter(res.total_cmv)
-        },
-
-        async valorLucroBrutoMensal () {
-            const req = await fetch(this.hostBack+'/lucro_bruto_mensal/'+this.defFilter())
-            const res = await req.json()
-            self.total_lucro_bruto_value.innerHTML = this.moneyFilter(res.valor_total)
+        async totaisNoMes () {
+            const req = await fetch(this.hostBack+'/totais_no_mes/'+this.defFilter())
+            if (req.status == 200) {
+                const res = await req.json()
+                self.total_vendas_value.innerHTML = this.moneyFilter(res.total_itens)
+                self.total_lucro_bruto_value.innerHTML = this.moneyFilter(res.total_lucro)
+                self.total_cmv_value.innerHTML = this.moneyFilter(res.total_cmv)
+            }
         },
 
         async valorEmCondicional () {
@@ -472,10 +465,6 @@ export default {
                 );
             }
         },
-
-        
-    },
-    created () {
     },
     mounted () {
         this.getAgrupamentos()
@@ -483,9 +472,7 @@ export default {
         setInterval(() => {
             this.heightDefine()
         }, 1000)
-        this.valorVendas()
-        this.valorCMV()
-        this.valorLucroBrutoMensal()
+        this.totaisNoMes()
         this.valorVendasMensais()
         this.metaDeVendas()
         this.rankingVendasPorVendedor()
@@ -497,9 +484,7 @@ export default {
         this.verifyLogin()
         setInterval(() => {
             this.valorEmCondicional()
-            this.valorVendas()
-            this.valorCMV()
-            this.valorLucroBrutoMensal()
+            this.totaisNoMes()
             this.valorVendasMensais()
             this.metaDeVendas()
             this.rankingVendasPorVendedor()
