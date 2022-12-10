@@ -1,29 +1,29 @@
 <template>
     <div id="main">
-        <section id="navbar">
+        <v-card id="navbar">
             <div id="nav-desktop">
-            <div id="nav-left">
-                <div id="image">
-                    <img :src="hostBack+ '/static/public/logo-oxi.png'" alt="logo" id="image_logo">
+                <div id="nav-left">
+                    <div id="image">
+                        <img :src="hostBack+ '/static/public/logo-oxi.png'" alt="logo" id="image_logo">
+                    </div>
+                    <div id="menu">
+                            <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><NuxtLink to="/painel/comercial/" id="menu_link">Comercial</NuxtLink><div id="down-bar"></div></div>
+                            <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#aaaaaa;">Comercial</a></div>
+
+                            <div id="div-menu_link" v-if="$route.path == '/painel/financeiro/'"><NuxtLink to="/painel/financeiro/" id="menu_link">Financeiro</NuxtLink><div id="down-bar"></div></div>
+                            <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#aaaaaa;">Financeiro</a></div>
+
+                            <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><NuxtLink to="/painel/estoque/" id="menu_link">Estoque</NuxtLink><div id="down-bar"></div></div>
+                            <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div>    
+
+                            <div id="div-menu_link" v-if="$route.path == '/painel/status/'"><NuxtLink to="/painel/status/" id="menu_link">Status</NuxtLink><div id="down-bar"></div></div>
+                            <div id="div-menu_link" v-else><a href="/painel/status/" id="menu_link" style="color:#aaaaaa;">Status</a></div>                    
+                    </div>
                 </div>
-                <div id="menu">
-                        <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><a href="/painel/comercial/" id="menu_link">Comercial</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#aaaaaa;">Comercial</a></div>
-
-                        <div id="div-menu_link" v-if="$route.path == '/painel/financeiro/'"><a href="/painel/financeiro/" id="menu_link">Financeiro</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#aaaaaa;">Financeiro</a></div>
-
-                        <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><a href="/painel/estoque/" id="menu_link">Estoque</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div>    
-
-                        <div id="div-menu_link" v-if="$route.path == '/painel/status/'"><a href="/painel/status/" id="menu_link">Status</a><div id="down-bar"></div></div>
-                        <div id="div-menu_link" v-else><a href="/painel/status/" id="menu_link" style="color:#aaaaaa;">Status</a></div>                    
+                <div id="perfil">
+                    <label>{{ user }}</label>
+                    <img :src="hostBack+'/static/public/perfil_default.png'" alt="" id="menu_perfil">
                 </div>
-            </div>
-            <div id="perfil">
-                <label>{{ user }}</label>
-                <img :src="hostBack+'/static/public/perfil_default.png'" alt="" id="menu_perfil">
-            </div>
             </div>
 
 
@@ -35,13 +35,13 @@
                     <div id="menu-drop">
                     <button type="button" id="drop"><span class="material-icons-outlined">menu</span></button>
                     <div id="drop-content">
-                        <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><a href="/painel/comercial/" id="menu_link">Comercial</a><div id="down-bar"></div></div>
+                        <div id="div-menu_link" v-if="$route.path == '/painel/comercial/'"><NuxtLink to="/painel/comercial/" id="menu_link">Comercial</NuxtLink><div id="down-bar"></div></div>
                         <div id="div-menu_link" v-else><a href="/painel/comercial/" id="menu_link" style="color:#aaaaaa;">Comercial</a></div>
 
-                        <div id="div-menu_link" v-if="$route.path == '/painel/financeiro/'"><a href="/painel/financeiro/" id="menu_link">Financeiro</a><div id="down-bar"></div></div>
+                        <div id="div-menu_link" v-if="$route.path == '/painel/financeiro/'"><NuxtLink to="/painel/financeiro/" id="menu_link">Financeiro</NuxtLink><div id="down-bar"></div></div>
                         <div id="div-menu_link" v-else><a href="/painel/financeiro/" id="menu_link" style="color:#aaaaaa;">Financeiro</a></div>
 
-                        <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><a href="/painel/estoque/" id="menu_link">Estoque</a><div id="down-bar"></div></div>
+                        <div id="div-menu_link" v-if="$route.path == '/painel/estoque/'"><NuxtLink to="/painel/estoque/" id="menu_link">Estoque</NuxtLink><div id="down-bar"></div></div>
                         <div id="div-menu_link" v-else><a href="/painel/estoque/" id="menu_link" style="color:#aaaaaa;">Estoque</a></div> 
                     </div>
                     </div>
@@ -54,7 +54,7 @@
                     <label>{{ user }}</label>
                 </div>
             </div>
-        </section>
+        </v-card>
     </div>
 </template>
 

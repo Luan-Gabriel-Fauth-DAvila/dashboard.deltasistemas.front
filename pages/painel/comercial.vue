@@ -1,56 +1,39 @@
 <template>
-    <div>
+    <div style="background: #eeeeee;">
         <Navbar :hostBack="hostBack" />
         <section id="painel">
-            <div id="filter">
-                <div>
-                    <label for="">Data Inicio</label>
-                    <input type="date" id="data_ini">
-                </div>
-                <div>
-                    <label for="">Data Fim</label>
-                    <input type="date" id="data_fim">
-                </div>
-                <div>
-                    <label for="">Agrupamento</label>
-                    <select id="agrupamento">
-                        <option v-for="agr in agrupamentos" :key="agr.codagrupamento" :value="agr.codagrupamento">{{ agr.dscagrupamento }}</option>
-                    </select>
-                </div>
-                <div>
-                    <button @click="defData" id="buttom_filter">Aplicar</button>
-                </div>
+            <v-card id='filter' class="d-flex justify-center align-center">
+                <v-row dense>
+                    <v-col cols="3">
+                        <DateField ref="dInicial" :mainLabel="'Data Inicio'" />
+                    </v-col>
+                    <v-col cols="3">
+                        <DateField ref="dFinal" :mainLabel="'Data Fim'" />
+                    </v-col>
+                    <v-col cols="3">
+                        <v-select filled dense :dark="true" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
+                    </v-col>
+                    <v-col cols="3" class="d-flex justify-end mt-2">
+                        <v-btn @click="defData">Filtrar</v-btn>
+                    </v-col>
+                </v-row>
+            </v-card>
+            <div id="res_geral">
+                <MiniCard 
+                    :label="'Total Vendas'" :value="res_geral.total_vendas" 
+                    :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, rgb(67, 24, 255), rgb(134, 140, 255))'" 
+                    :icon="'trending_up'" :loading="loading"/>
+                <MiniCard 
+                    :label="'Total CMV'" :value="res_geral.total_cmv" 
+                    :txColor="theme.txColor.dark" :icon="'leaderboard'" :loading="loading"/>
+                <MiniCard 
+                    :label="'Total Lucro'" :value="res_geral.total_lucro" 
+                    :txColor="theme.txColor.dark" :side="'left'" :icon="'assessment'" :loading="loading"/>
+                <MiniCard 
+                    :label="'Total em Locação'" :value="res_geral.total_locado" 
+                    :txColor="theme.txColor.dark" :side="'left'" :icon="'payments'" :loading="loading"/>
             </div>
-            <div id="total_vendas">
-                <div>
-                    <label>total de vendas</label>
-                    <h4 id='total_vendas_value'>Sem dados</h4>
-                </div>
-                <span class="material-icons-outlined">trending_up</span>
-            </div>
-            <div id="total_cmv">
-                <div>
-                    <label>CMV</label>
-                    <h4 id="total_cmv_value">Sem dados</h4>
-                </div>
-                <span class="material-icons-outlined">leaderboard</span>
-            </div>
-            <div id="total_lucro_bruto">
-                <span class="material-icons-outlined">assessment</span>
-                <div>
-                    <label>Lucro bruto</label>
-                    <h4 id="total_lucro_bruto_value">Sem dados</h4>
-                </div>
-            </div>
-            <div id="valor_em_locacao">
-                <span class="material-icons-outlined">payments</span>
-                <div>
-                    <label>Valor em locação</label>
-                    <h4 id="total_valor_em_locacao">Sem dados</h4>
-                </div>
-            </div>
-            <div id="total_vendas_mensal">
-                <span></span>
+            <v-card id="total_vendas_mensal">
                 <div>
                     <h2>Vendas por Mês</h2>
                     <label>Total evolução <span class="material-icons-outlined" id="total_evolucao_arrow"></span><p id="total_evolucao"></p></label>
@@ -58,17 +41,16 @@
                 <div :style="{ maxHeight: '28vh' }">
                     <div id="total_vendas_mensal_chart"></div>
                 </div>
-            </div>
-            <div id="total_vendas_por_agrupamento">
+            </v-card>
+            <v-card id="total_vendas_por_agrupamento">
                 <div>
-                    <h2>Vendas por Agrupamento</h2>
-                    <label for="">Por Mês</label>
+                    <h2 class="mb-4">Vendas por Agrupamento</h2>
                 </div>
-                <div :style="{ maxHeight: '28vh' }">
+                <div style="height: 30vh;" class="d-flex align-center">
                     <canvas id="total_vendas_por_agrupamento_chart"></canvas>
                 </div>
-            </div>
-            <div id="meta_de_vendas">
+            </v-card>
+            <v-card id="meta_de_vendas">
                 <div>
                     <h2>Meta de Vendas</h2><label>Por Mês</label>
                 </div>
@@ -77,17 +59,17 @@
                         <b id="barra_cliente" v-if="metadevendas_total" >{{ metadevendas_atual }} de {{ metadevendas_total }}</b>
                         <b id="barra_cliente"  v-else >Sem dados</b>
                         <div id='barra_meta_vendas'>
-                            <div id="barra_porcentagem" :style="{ backgroundColor: colors[2], width: tamanhoBarra(metadevendas_atual, metadevendas_total) }">
+                            <div id="barra_porcentagem" :style="{ backgroundColor: theme.pallete[2], width: tamanhoBarra(metadevendas_atual, metadevendas_total) }">
                                 <b id="barra_valor" v-if="metadevendas_total">{{ tamanhoBarra(metadevendas_atual, metadevendas_total) }} %</b>
                                 <b id="barra_valor" v-else>Sem Dados</b>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="ranking_de_vendas_por_vendedor">
+            </v-card>
+            <v-card id="ranking_de_vendas_por_vendedor">
                 <div>
-                    <h2>Ranking de Vendas Por vendedor<label style="font-weight: normal;">Por Mês</label></h2>
+                    <h2 class="mb-4">Ranking de Vendas Por vendedor</h2>
                 </div>
                 <div :style="{ maxHeight: '28vh' }">
                     <!-- <div id="container_principal" v-for="(r, index) in rankingvendedores_var" :key="index">
@@ -100,8 +82,8 @@
                     </div> -->
                     <div id="ranking_de_vendas_por_vendedor_chart"></div>
                 </div>
-            </div>
-            <div id="ranking_de_vendas_por_cliente">
+            </v-card>
+            <v-card id="ranking_de_vendas_por_cliente">
                 <div>
                     <h2>Ranking de Vendas Por Cliente<label style="font-weight: normal;">Por Mês</label></h2>
                 </div>
@@ -116,8 +98,8 @@
                     </div> -->
                     <div id="ranking_de_vendas_por_cliente_chart"></div>
                 </div>
-            </div>
-            <div id="ranking_produtos_mais_vendidos">
+            </v-card>
+            <v-card id="ranking_produtos_mais_vendidos">
                 <div>
                     <h2>Vendas Por Produto</h2>
                     <label for="">Mais Vendidos</label>
@@ -125,19 +107,23 @@
                 <div :style="{ maxHeight: '28vh' }">
                     <canvas id="produtos_mais_vendidos_chart"></canvas>
                 </div>
-            </div>
+            </v-card>
         </section>
     </div>
 </template>
 
 <script>
 import Navbar from '/components/navbar.vue';
+import DateField from '/components/DateField.vue';
+import MiniCard from '../../components/MiniCard.vue';
 
 export default {
     name: 'Comercial',
     components: {
-        Navbar,
-    },
+    Navbar,
+    DateField,
+    MiniCard
+},
     head () {
         return {
             script: [
@@ -157,24 +143,38 @@ export default {
             rankingvendedores_var: null,
             rankingvendedores_total_vendas: null,
             rankingvendedores_sum: 0,
-            colors: [
-                '#c438ef',
-                '#ff409a',
-                '#6452ff',
-                '#05cd99',
-                '#6452ff',
-                '#ffc086',
-                '#4318ff',
-                '#05cd99',
-            ],
             metadevendas_total: null,
             metadevendas_atual: null,
             heightDefined: 0,
-
             agrupamentos: null,
+
+            theme: {
+                txColor: {
+                    dark: '#1b2559',
+                    light: '#fff',
+                },
+                pallete: [
+                    '#c438ef',
+                    '#ff409a',
+                    '#6452ff',
+                    '#05cd99',
+                    '#6452ff',
+                    '#ffc086',
+                    '#4318ff',
+                    '#05cd99',
+                ]
+            },
+
             class_nav: 'deactive',
             url: '',
-            teste: 'teste',
+            res_geral: {
+                total_vendas: null,
+                total_cmv: null,
+                total_lucro: null,
+                total_locado: null,
+                loading: true
+            }
+
         }
     },
     props: {
@@ -200,8 +200,8 @@ export default {
             }
         },
         defData () {
-            const ini = self.data_ini.value.split('-', 3)
-            const fim = self.data_fim.value.split('-', 3)
+            const ini = this.$refs.dInicial.date.split('-', 3)
+            const fim = this.$refs.dFinal.date.split('-', 3)
             window.location.href = (this.hostFront+'/painel/comercial/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
         },
         defFilter () {
@@ -238,21 +238,18 @@ export default {
         },
 
         async totaisNoMes () {
+            this.loading = true
             const req = await fetch(this.hostBack+'/totais_no_mes/'+this.defFilter())
             if (req.status == 200) {
                 const res = await req.json()
-                self.total_vendas_value.innerHTML = this.moneyFilter(res.total_itens)
-                self.total_lucro_bruto_value.innerHTML = this.moneyFilter(res.total_lucro)
-                self.total_cmv_value.innerHTML = this.moneyFilter(res.total_cmv)
+                this.res_geral.total_vendas = this.moneyFilter(res.total_itens)
+                this.res_geral.total_cmv = this.moneyFilter(res.total_lucro)
+                this.res_geral.total_lucro = this.moneyFilter(res.total_cmv)
+                this.res_geral.total_locado = this.moneyFilter(res.total_locado)
             }
+            this.loading = false
         },
 
-        async valorEmCondicional () {
-            const req = await fetch(this.hostBack+'/cilindros_em_condicionais/total_em_condicional/'+this.defFilter())
-            const res = await req.json()
-            self.total_valor_em_locacao.innerHTML = this.moneyFilter(res.total)
-        },
-        
         async valorVendasMensais () {
             const req = await fetch(this.hostBack+'/total_vendas_mensal/'+this.defFilter())
             const res = await req.json()
@@ -309,8 +306,8 @@ export default {
             const data = {
                 labels: res.dscagrupamento,
                 datasets: [{
-                    label: 'Valor de Vendas Mensais',
-                    backgroundColor: this.colors,
+                    label: 'Valor de Vendas',
+                    backgroundColor: this.theme.pallete,
                     hoverOffset: 4,
                     data: res.total_vendas,
                 }]
@@ -349,7 +346,7 @@ export default {
         },
 
         async rankingVendasPorVendedor () {
-            const req = await fetch(this.hostBack+'/total_de_vendas_por_vendedor')
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_vendedor')
             const res = await req.json()
 
             // this.rankingvendedores_var = res
@@ -436,7 +433,7 @@ export default {
                 labels: res.nome,
                 datasets: [{
                     label: 'Valor de Vendas Mensais',
-                    backgroundColor: this.colors,
+                    backgroundColor: this.theme.pallete,
                     hoverOffset: 4,
                     data: res.qtd,
                 }]
@@ -467,6 +464,7 @@ export default {
         },
     },
     mounted () {
+        // this.$vuetify.theme.isDark = true;
         this.getAgrupamentos()
         this.heightDefine()
         setInterval(() => {
@@ -479,13 +477,11 @@ export default {
         this.valorVendasPorAgrupamento()
         this.rankingVendasPorCliente()
         this.produtosMaisVendidos()
-        this.valorEmCondicional()
         
         this.verifyLogin()
         setInterval(() => {
-            this.valorEmCondicional()
             this.totaisNoMes()
-            this.valorVendasMensais()
+            this.valorVendasMensais()   
             this.metaDeVendas()
             this.rankingVendasPorVendedor()
             this.valorVendasPorAgrupamento()
@@ -508,7 +504,7 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 html,body {
-  background-color: #eeeeee;
+  background-color: #eeeeee !important;
 }
 small {
     line-height: 2.5vh;
@@ -548,13 +544,13 @@ h6 {
 #painel {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
-    grid-template-rows: 15vh 15vh 45vh 25vh 40vh 40vh;
+    grid-template-rows: 17vh 15vh 45vh 40vh 40vh 25vh;
     grid-template-areas:    "filter filter filter filter"
-                            "total_vendas total_cmv total_lucro_bruto valor_em_locacao"
+                            "res_geral res_geral res_geral res_geral"
                             "total_vendas_mensal total_vendas_mensal total_vendas_por_agrupamento total_vendas_por_agrupamento"
-                            "meta_de_vendas meta_de_vendas ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor"
-                            "ranking_de_vendas_por_cliente ranking_de_vendas_por_cliente ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor"
-                            "ranking_de_vendas_por_cliente ranking_de_vendas_por_cliente ranking_produtos_mais_vendidos ranking_produtos_mais_vendidos";
+                            "ranking_produtos_mais_vendidos ranking_produtos_mais_vendidos ranking_de_vendas_por_cliente ranking_de_vendas_por_cliente"
+                            "ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor ranking_de_vendas_por_cliente ranking_de_vendas_por_cliente"
+                            "ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor meta_de_vendas meta_de_vendas";
     margin: 5vh 10%;  
     padding: 0 0; 
     border-radius: 2vh;
@@ -563,7 +559,7 @@ h6 {
   #painel {
         display: grid;
         grid-template-columns: 50% 50%;
-        grid-template-rows: 15vh 15vh 15vh 15vh 40vh 40vh 25vh 80vh 80vh 40vh;
+        grid-template-rows: 20vh 20vh 15vh 15vh 40vh 40vh 25vh 80vh 80vh 40vh;
         grid-template-areas:    "filter filter"
                                 "filter filter"
                                 "total_vendas total_cmv" 
@@ -616,19 +612,12 @@ h6 {
     box-shadow: 0 0 5px 0;
     background-color: rgb(214, 214, 214);
 }
-#total_vendas {
-    grid-area: total_vendas;
+#res_geral {
+    grid-area: res_geral;
 
     display: flex;
     justify-content: space-evenly;  
     align-items: center;
-
-    line-height: 5vh;
-    padding: 2vh 2vh;
-    margin: 2vh;
-    border-radius: 1vh;
-    color: white;
-    background: linear-gradient(135deg, rgb(67, 24, 255), rgb(134, 140, 255));
 }
 #total_cmv {
     grid-area: total_cmv;

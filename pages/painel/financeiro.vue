@@ -36,22 +36,22 @@
                     </div>
                 </div>
             </div>
-            <div id="cr_atrasado">
-                <div id="cpr_title">
-                    <label>Contas a receber</label><small>(atrasado)</small>
-                </div>
-                <div id="cpr_value">
-                    <h4 id="cr_atrasado_value">Sem dados</h4>
-                </div>
+            <div id="res_geral">
+                <MiniCard 
+                    :label="'Contas a Receber(atrasado)'" :value="res_geral.contas_a_receber_atrasadas" 
+                    :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #05CD99 0%, #05CD55 100%)'" :icon="'assessment'"/>
+                <MiniCard 
+                    :label="'Contas a Receber'" :value="res_geral.contas_a_receber" 
+                    :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #05CD99 0%, #05CD55 100%)'" :icon="'assessment'"/>
+                <MiniCard 
+                    :label="'Contas a Pagar(atrasado)'" :value="res_geral.contas_a_pagar_atrasadas" :side="'left'" 
+                    :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #CD0511 0%, #FF409A 94.06%)'" :icon="'assessment'"/>
+                <MiniCard 
+                    :label="'Contas a Pagar'" :value="res_geral.contas_a_pagar" :side="'left'"
+                    :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #CD0511 0%, #FF409A 94.06%)'" :icon="'assessment'"/>
             </div>
-            <div id="cr_vencer">
-                <div id="cpr_title">
-                    <label>Contas a receber</label><small>(a vencer)</small>
-                </div>
-                <div id="cpr_value">
-                    <h4 id="cr_vencer_value">Sem dados</h4>
-                </div>
-            </div>
+
+
             <div id="cp_atrasado">
                 <div id="cpr_title">
                     <label>Contas a pagar</label><small>(atrasado)</small>
@@ -122,10 +122,12 @@
 
 <script>
 import Navbar from '/components/navbar.vue';
+import MiniCard from '/components/MiniCard.vue';
 export default {
     name: 'Financeiro',
     components: {
         Navbar,
+        MiniCard
     },
     head() {
         return {
@@ -155,6 +157,19 @@ export default {
 
             saldoDisponivelEmContas_var: null,
             saldoDisponivelEmContas_sum: null,
+
+            res_geral: {
+                contas_a_receber: null,
+                contas_a_receber_atrasadas: null,
+                contas_a_pagar: null,
+                contas_a_pagar_atrasadas: null,
+            },
+            theme: {
+                txColor: {
+                    light: '#fff',
+                    dark: '#1b2559',
+                }
+            }
         }
     },
     methods: {
@@ -197,10 +212,10 @@ export default {
 
             if (req.status == 200) {
                 const res = await req.json()
-                self.cr_vencer_value.innerHTML = this.moneyFilter(res.contas_a_receber)
-                self.cr_atrasado_value.innerHTML = this.moneyFilter(res.contas_a_receber_atrasadas)
-                self.cp_vencer_value.innerHTML = this.moneyFilter(res.contas_a_pagar)
-                self.cp_atrasado_value.innerHTML = this.moneyFilter(res.contas_a_pagar_atrasadas)
+                this.res_geral.contas_a_receber = this.moneyFilter(res.contas_a_receber)
+                this.res_geral.contas_a_receber_atrasadas = this.moneyFilter(res.contas_a_receber_atrasadas)
+                this.res_geral.contas_a_pagar = this.moneyFilter(res.contas_a_pagar)
+                this.res_geral.contas_a_pagar_atrasadas = this.moneyFilter(res.contas_a_pagar_atrasadas)
             }
             
         },
@@ -509,7 +524,7 @@ h6 {
     grid-template-rows: 30vh 15vh 60vh 40vh 50vh;
     grid-template-areas:    /*"filter filter filter filter"*/
                             "saldo_em_conta saldo_em_conta saldo_em_conta saldo_em_conta"
-                            "cr_atrasado cr_vencer cp_atrasado cp_vencer"
+                            "res_geral res_geral res_geral res_geral"
                             "contas_a_receber contas_a_receber contas_a_pagar contas_a_pagar"
                             "recebimentos_por_forma recebimentos_por_forma emprestimos emprestimos"
                             "fluxo_de_caixa fluxo_de_caixa fluxo_de_caixa fluxo_de_caixa";
@@ -620,18 +635,12 @@ h6 {
 
 
 
-#cr_atrasado {
-    grid-area: cr_atrasado;
-    color: #E5E5E5;
-    margin: 2vh;
-    border-radius: 2vh;
-    padding: .5vh 2vh 2vh 2vh;
+#res_geral {
+    grid-area: res_geral;
 
-    background: linear-gradient(135deg, #05CD99 0%, #05CD55 100%);
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-
+    justify-content: space-evenly;  
+    align-items: center;
 }
 #cpr_title {
     width: 100%;
