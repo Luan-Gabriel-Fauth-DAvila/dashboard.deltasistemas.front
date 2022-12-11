@@ -11,7 +11,7 @@
                         <DateField ref="dFinal" :mainLabel="'Data Fim'" />
                     </v-col>
                     <v-col cols="3">
-                        <v-select filled dense :dark="true" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
+                        <v-select disabled filled dense :dark="true" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
                     </v-col>
                     <v-col cols="3" class="d-flex justify-end mt-2">
                         <v-btn @click="defData">Filtrar</v-btn>
@@ -22,16 +22,16 @@
                 <MiniCard 
                     :label="'Total Vendas'" :value="res_geral.total_vendas" 
                     :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, rgb(67, 24, 255), rgb(134, 140, 255))'" 
-                    :icon="'trending_up'" :loading="loading"/>
+                    :icon="'trending_up'" :loading="res_geral.loading"/>
                 <MiniCard 
                     :label="'Total CMV'" :value="res_geral.total_cmv" 
-                    :txColor="theme.txColor.dark" :icon="'leaderboard'" :loading="loading"/>
+                    :txColor="theme.txColor.dark" :icon="'leaderboard'" :loading="res_geral.loading"/>
                 <MiniCard 
                     :label="'Total Lucro'" :value="res_geral.total_lucro" 
-                    :txColor="theme.txColor.dark" :side="'left'" :icon="'assessment'" :loading="loading"/>
+                    :txColor="theme.txColor.dark" :side="'left'" :icon="'assessment'" :loading="res_geral.loading"/>
                 <MiniCard 
                     :label="'Total em Locação'" :value="res_geral.total_locado" 
-                    :txColor="theme.txColor.dark" :side="'left'" :icon="'payments'" :loading="loading"/>
+                    :txColor="theme.txColor.dark" :side="'left'" :icon="'payments'" :loading="res_geral.loading"/>
             </div>
             <v-card id="total_vendas_mensal">
                 <div>
@@ -238,7 +238,7 @@ export default {
         },
 
         async totaisNoMes () {
-            this.loading = true
+            this.res_geral.loading = true
             const req = await fetch(this.hostBack+'/totais_no_mes/'+this.defFilter())
             if (req.status == 200) {
                 const res = await req.json()
@@ -247,7 +247,7 @@ export default {
                 this.res_geral.total_lucro = this.moneyFilter(res.total_cmv)
                 this.res_geral.total_locado = this.moneyFilter(res.total_locado)
             }
-            this.loading = false
+            this.res_geral.loading = false
         },
 
         async valorVendasMensais () {
@@ -346,7 +346,7 @@ export default {
         },
 
         async rankingVendasPorVendedor () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_vendedor')
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_vendedor'+this.defFilter())
             const res = await req.json()
 
             // this.rankingvendedores_var = res
@@ -386,7 +386,7 @@ export default {
         },
 
         async rankingVendasPorCliente () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_cliente')
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_cliente'+this.defFilter())
             const res = await req.json()
 
             // this.rankingclientes_var = res
@@ -426,13 +426,13 @@ export default {
         },
         
         async produtosMaisVendidos () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_produto')
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_produto/'+this.defFilter())
             const res = await req.json()
             
             const data = {
                 labels: res.nome,
                 datasets: [{
-                    label: 'Valor de Vendas Mensais',
+                    label: 'Qtd de Vendida',
                     backgroundColor: this.theme.pallete,
                     hoverOffset: 4,
                     data: res.qtd,
@@ -553,7 +553,6 @@ h6 {
                             "ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor meta_de_vendas meta_de_vendas";
     margin: 5vh 10%;  
     padding: 0 0; 
-    border-radius: 2vh;
 }
 @media only screen and (max-width: 630px) {
   #painel {
@@ -586,7 +585,6 @@ h6 {
     background: linear-gradient(135deg, rgb(67, 24, 255), rgb(134, 140, 255));
     padding: 2vh 2vh;
     margin: 2vh;
-    border-radius: .5vh;
     color: #fff;
     z-index: 0;
 }

@@ -1,19 +1,24 @@
 <template>
-    <div>
+    <div style="background: #eeeeee;">
         <Navbar :hostBack="hostBack" />
         <section id="painel">
-            <!-- <div id="filter">
-                <div>
-                    <label for="">Data Inicio</label>
-                    <input type="date" id="data_ini">
-                </div>
-                <div>
-                    <label for="">Data Fim</label>
-                    <input type="date" id="data_fim">
-                </div>
-                <button @click="defData" id="buttom_filter">Aplicar</button>
-            </div> -->
-            <div id="saldo_em_conta">
+            <v-card id='filter' class="d-flex justify-center align-center">
+                <v-row dense>
+                    <v-col cols="3">
+                        <DateField ref="dInicial" :mainLabel="'Data Inicio'" />
+                    </v-col>
+                    <v-col cols="3">
+                        <DateField ref="dFinal" :mainLabel="'Data Fim'" />
+                    </v-col>
+                    <v-col cols="3">
+                        <v-select disabled filled dense :dark="true" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
+                    </v-col>
+                    <v-col cols="3" class="d-flex justify-end mt-2">
+                        <v-btn @click="defData">Filtrar</v-btn>
+                    </v-col>
+                </v-row>
+            </v-card>
+            <v-card id="saldo_em_conta">
                 <div>
                     <h4>Saldo em Conta</h4>
                 </div>
@@ -35,7 +40,7 @@
                         <label>{{ moneyFilter(c.valor) }}</label>
                     </div>
                 </div>
-            </div>
+            </v-card>
             <div id="res_geral">
                 <MiniCard 
                     :label="'Contas a Receber(atrasado)'" :value="res_geral.contas_a_receber_atrasadas" 
@@ -521,15 +526,15 @@ h6 {
 #painel {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
-    grid-template-rows: 30vh 15vh 60vh 40vh 50vh;
-    grid-template-areas:    /*"filter filter filter filter"*/
+    grid-template-rows: 17vh 30vh 15vh 60vh 40vh 50vh;
+    grid-template-areas:    "filter filter filter filter"
                             "saldo_em_conta saldo_em_conta saldo_em_conta saldo_em_conta"
                             "res_geral res_geral res_geral res_geral"
                             "contas_a_receber contas_a_receber contas_a_pagar contas_a_pagar"
                             "recebimentos_por_forma recebimentos_por_forma emprestimos emprestimos"
                             "fluxo_de_caixa fluxo_de_caixa fluxo_de_caixa fluxo_de_caixa";
-    margin: 0 10%;  
-    padding: 5% 0; 
+    margin: 5vh 10%;  
+    padding: 0 0; 
 }
 @media only screen and (max-width: 630px) {
   #painel {
@@ -562,7 +567,6 @@ h6 {
     background: linear-gradient(135deg, rgb(67, 24, 255), rgb(134, 140, 255));
     padding: 2vh 2vh;
     margin: 2vh;
-    border-radius: .5vh;
     color: #fff;
     z-index: 0;
 }
@@ -593,7 +597,6 @@ h6 {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
 
     display: flex;
