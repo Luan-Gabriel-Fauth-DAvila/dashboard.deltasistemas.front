@@ -20,10 +20,10 @@
                   <v-container>
                     <v-row dense>  
                       <v-col cols="12" md="12">
-                        <v-textarea dense filled required v-model="form.bug" :rules="textRules" label="Insira uma descrição detalhada!" rows="5"></v-textarea>
+                        <v-textarea dense filled required v-model="message" :rules="textRules" label="Insira uma descrição detalhada!" rows="5"></v-textarea>
                       </v-col>
                       <v-col align="center" cols="12" md="12" no-gutter>
-                        <v-btn :disabled="!valid" color="success" class="mr-4" @click="addBug">Enviar</v-btn>
+                        <v-btn :disabled="!valid" color="success" class="mr-4" @click="1">Enviar</v-btn>
                         <v-btn color="warning" class="mr-4" @click="close">Cancelar</v-btn>
                       </v-col>
                     </v-row>
@@ -39,15 +39,10 @@ export default {
     name: 'SuportStatus',
     data () {
         return {
+            message: '',
             dialog: false,
             valid: true,
             ticketError: '',
-            form: {
-              company: null,
-              company_worker: null,
-              title: '',
-              bug: '',
-            },
             textRules: [
               v => !!v || 'Obrigatório',
               v => (v && v.length >= 10) || 'Ao menos 10 caracteres',
@@ -88,6 +83,15 @@ export default {
             }else {
             }
         },
+        async getSuportStatus () {
+            const req = fetch(process.env.HOST_BACK+'/get_suport_status/', {
+                method: 'GET',
+            })
+            if (req.status == 200) {
+                const res = req.json()
+                this.message = res.message
+            }
+        }
     }
 }
 </script>

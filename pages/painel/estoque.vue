@@ -1,62 +1,61 @@
 <template>
-    <div>
-        
+    <div style="background: #eeeeee;">
         <Navbar :hostBack="hostBack" />
         <div id="painel">
-            <div id="prod_em_estoque">                        
+            <v-card id="prod_em_estoque">                        
                 <div>
                     <label>Qtd. Total (Produtos em Estoque)</label>
                 </div>
                 <div>
                     <h4 id="prod_em_estoque_value">Sem dados</h4>
                 </div>   
-            </div>
-            <div id="cilindros_cheios">            
+            </v-card>
+            <v-card id="cilindros_cheios">            
                 <div>
                     <label>Qtd. Cilindros Cheios</label>
                 </div>  
                 <div>
                     <h4 id="cilindros_cheios_value">Sem Dados</h4>
                 </div>             
-            </div>
-            <div id="ticket_medio_de_compra">            
+            </v-card>
+            <v-card id="ticket_medio_de_compra">            
                 <div>
                     <label>Ticket Médio de Compra</label>
                 </div>   
                 <div>
                     <h4 id="ticket_medio_de_compra_value">Sem dados</h4>
                 </div>            
-            </div>
-            <div id="vlr_prod_em_estoque">            
+            </v-card>
+            <v-card id="vlr_prod_em_estoque">            
                 <div>
                     <label>Valor Total (Produtos em Estoque)</label>
                 </div> 
                 <div>
                     <h4 id="vlr_prod_em_estoque_value">Sem dados</h4>
                 </div>           
-            </div>
-            <div id="mapa_locacao">      
+            </v-card>
+            <v-card id="mapa_locacao">      
                 <div id="mapa-title">
                     <h2>Mapa Locações</h2>
                 </div> 
                 <div id="map"></div>
-            </div>
-            <div id="ranking_compra_por_forn">            
+            </v-card>
+            <v-card id="ranking_compra_por_forn">            
                 <div>
                     <h2>Ranking de Compras <small>(Por Fornecedor)</small></h2>
                 </div> 
                 <div :style="{ maxHeight: '40vh' }">
                     <canvas id="ranking_compras_por_fornecedor_chart"></canvas>
                 </div>           
-            </div>
-            <div id="prod_mais_comprados">            
+            </v-card>
+            <v-card id="prod_mais_comprados">            
                 <div>
                     <h2>Top 10 Compras Por Produto</h2>
                 </div>
                 <div :style="{ maxHeight: '40vh' }">
                     <canvas id="ranking_produto_mais_comprado_chart"></canvas>
                 </div> 
-            </div>
+            </v-card>
         </div>
     </div>
 </template>
@@ -347,7 +346,6 @@ label {
     color: #e5e5e5;
     background: linear-gradient(135deg, #05CD99 0%, #05CD55 100%);
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     padding-bottom: 4vh;
 
@@ -361,7 +359,6 @@ label {
     color: #e5e5e5;
     background: #6452FF;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     padding-bottom: 4vh;
 
@@ -375,7 +372,6 @@ label {
     color: #e5e5e5;
     background: #C438EF;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     padding-bottom: 4vh;
 
@@ -389,7 +385,6 @@ label {
     color: #e5e5e5;
     background: #868CFF;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     padding-bottom: 4vh;
 
@@ -403,7 +398,6 @@ label {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
 }
 #mapa-title {
@@ -430,7 +424,6 @@ label {
     color: #1B2559 !important;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
 }
 #prod_mais_comprados {
@@ -438,7 +431,6 @@ label {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
 }
 

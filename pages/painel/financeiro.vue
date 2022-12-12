@@ -43,65 +43,48 @@
             </v-card>
             <div id="res_geral">
                 <MiniCard 
-                    :label="'Contas a Receber(atrasado)'" :value="res_geral.contas_a_receber_atrasadas" 
+                    :label="'Contas a Receber(atrasado)'" :value="res_geral.contas_a_receber_atrasadas" :loading="res_geral.loading"
                     :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #05CD99 0%, #05CD55 100%)'" :icon="'assessment'"/>
                 <MiniCard 
-                    :label="'Contas a Receber'" :value="res_geral.contas_a_receber" 
+                    :label="'Contas a Receber'" :value="res_geral.contas_a_receber" :loading="res_geral.loading"
                     :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #05CD99 0%, #05CD55 100%)'" :icon="'assessment'"/>
                 <MiniCard 
-                    :label="'Contas a Pagar(atrasado)'" :value="res_geral.contas_a_pagar_atrasadas" :side="'left'" 
+                    :label="'Contas a Pagar(atrasado)'" :value="res_geral.contas_a_pagar_atrasadas" :side="'left'" :loading="res_geral.loading"
                     :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #CD0511 0%, #FF409A 94.06%)'" :icon="'assessment'"/>
                 <MiniCard 
-                    :label="'Contas a Pagar'" :value="res_geral.contas_a_pagar" :side="'left'"
+                    :label="'Contas a Pagar'" :value="res_geral.contas_a_pagar" :side="'left'" :loading="res_geral.loading"
                     :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #CD0511 0%, #FF409A 94.06%)'" :icon="'assessment'"/>
             </div>
 
-
-            <div id="cp_atrasado">
-                <div id="cpr_title">
-                    <label>Contas a pagar</label><small>(atrasado)</small>
-                </div>
-                <div id="cpr_value">
-                    <h4 id="cp_atrasado_value">Sem dados</h4>
-                </div>
-            </div>
-            <div id="cp_vencer">
-                <div id="cpr_title">
-                    <label>Contas a pagar</label><small>(a vencer)</small>
-                </div>
-                <div id="cpr_value">
-                    <h4 id="cp_vencer_value">Sem dados</h4>
-                </div>
-            </div>
-            <div id="contas_a_receber">
+            <v-card id="contas_a_receber">
                 <div>
                     <h4>Contas a Receber <small>(dia)</small></h4>
                 </div>
                 <div :style="{ height: '50vh' }">
                     <canvas id="contas_a_receber_chart"></canvas>
                 </div>
-            </div>
-            <div id="contas_a_pagar">
+            </v-card>
+            <v-card id="contas_a_pagar">
                 <div>
                     <h4>Contas a Pagar <small>(dia)</small></h4>
                 </div>
                 <div :style="{ height: '50vh' }">
                     <canvas id="contas_a_pagar_chart"></canvas>
                 </div>
-            </div>
-            <div id="recebimentos_por_forma">
+            </v-card>
+            <v-card id="recebimentos_por_forma">
                 <div>
                     <h4>Recebimentos por forma</h4>
                 </div>
                 <div style="max-height: 30vh;">
                     <canvas id="recebimentos_por_forma_chart"></canvas>
                 </div>
-            </div>
-            <div id="emprestimos">
+            </v-card>
+            <v-card id="emprestimos">
                 <div id="emprestimos_title">
                     <h4>Empréstimos <small>(saldo)</small></h4><h3 :style="{ color: '#FF869C', fontSize: '3vh' }">{{ detalhesFinaciamentoEmprestimo_total }}</h3>
                 </div>
-                <div>
+                <div style="max-height: 29vh;overflow-y: auto;">
                     <div id="container_principal" v-for="(r, index) in detalhesFinaciamentoEmprestimo_var" :key="index">
                         <div id='barra_total'>
                             <div id="barra_porcentagem" :style="{ width: tamanhoBarra(r.valor, detalhesFinaciamentoEmprestimo_sum) + '%' }">
@@ -112,15 +95,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="fluxo_de_caixa">
+            </v-card>
+            <v-card id="fluxo_de_caixa">
                 <div>
                     <h4>Previsão de Faturas <small>(para os próximos 20 dias)</small></h4>
                 </div>
                 <div :style="{ height: '30vh' }">
                     <div id="fluxo_20_dias_chart"></div>
                 </div>
-            </div>
+            </v-card>
         </section>
     </div>
 </template>
@@ -168,6 +151,7 @@ export default {
                 contas_a_receber_atrasadas: null,
                 contas_a_pagar: null,
                 contas_a_pagar_atrasadas: null,
+                loading: true,
             },
             theme: {
                 txColor: {
@@ -213,6 +197,7 @@ export default {
         },
 
         async contasResumoGeral () {
+            this.res_geral.loading = true
             const req = await fetch(this.hostBack+'/contas_resumo_geral')
 
             if (req.status == 200) {
@@ -222,7 +207,7 @@ export default {
                 this.res_geral.contas_a_pagar = this.moneyFilter(res.contas_a_pagar)
                 this.res_geral.contas_a_pagar_atrasadas = this.moneyFilter(res.contas_a_pagar_atrasadas)
             }
-            
+            this.res_geral.loading = false            
         },
 
         async contasReceber () {
@@ -344,7 +329,7 @@ export default {
             const data = {
                 labels: formaRecebimentoTitle,
                 datasets: [{
-                    label: 'Valor de Vendas Mensais',
+                    label: 'Valor de Rec.',
                     data: formaRecebimentosValue,
                     backgroundColor: this.colors,
                     hoverOffset: 4,
@@ -578,7 +563,6 @@ h6 {
 #filter #data_ini,
 #filter #data_fim {
     border: unset;
-    border-radius: 1vh;
     padding: 1vh;
 }
 #buttom_filter {
@@ -586,7 +570,6 @@ h6 {
     padding: 1vh;
     background-color: #fff;
     color: #1B2559;
-    border-radius: .5vh;
 }
 #buttom_filter:hover {
     box-shadow: 0 0 5px 0;
@@ -645,61 +628,12 @@ h6 {
     justify-content: space-evenly;  
     align-items: center;
 }
-#cpr_title {
-    width: 100%;
-    text-align: center;
-}
-#cpr_value {
-    width: 100%;
-    text-align: center;
-}
-#cr_vencer {
-    grid-area: cr_vencer;
-    color: #E5E5E5;
-    margin: 2vh;
-    border-radius: 2vh;
-    padding: .5vh 2vh 2vh 2vh;
-
-    background: linear-gradient(135deg, #05CD99 0%, #05CD55 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-}
-#cp_atrasado {
-    grid-area: cp_atrasado;
-    color: #E5E5E5;
-    margin: 2vh;
-    border-radius: 2vh;
-    padding: .5vh 2vh 2vh 2vh;
-    
-    background: linear-gradient(135deg, #CD0511 0%, #FF409A 94.06%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-}
-#cp_vencer {
-    grid-area: cp_vencer;
-    color: #E5E5E5;
-    margin: 2vh;
-    border-radius: 2vh;
-    padding: .5vh 2vh 2vh 2vh;
-    
-    background: linear-gradient(135deg, #CD0511 0%, #FF409A 94.06%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-}
-
-
-
-
 
 #contas_a_receber {
     grid-area: contas_a_receber;
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     
 }
@@ -708,7 +642,6 @@ h6 {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     
 }
@@ -717,7 +650,6 @@ h6 {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     
 }
@@ -728,9 +660,7 @@ h6 {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
-    padding: 2vh 2vh;
-    
+    padding: 2vh 2vh;    
 }
 #emprestimos_title {
     display: flex;
@@ -744,7 +674,6 @@ h6 {
     color: #1B2559;
     background-color: white;
     margin: 2vh;
-    border-radius: 2vh;
     padding: 2vh 2vh;
     
 }
