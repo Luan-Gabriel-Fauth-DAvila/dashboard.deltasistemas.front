@@ -10,9 +10,9 @@
                     <v-col cols="3">
                         <DateField ref="dFinal" :mainLabel="'Data Fim'" />
                     </v-col>
-                    <v-col cols="3">
+                    <!-- <v-col cols="3">
                         <v-select disabled filled dense :dark="true" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
-                    </v-col>
+                    </v-col> -->
                     <v-col cols="3" class="d-flex justify-end mt-2">
                         <v-btn @click="defData">Filtrar</v-btn>
                     </v-col>
@@ -310,7 +310,7 @@ export default {
         },
 
         async recebimentosPorForma () {
-            const req = await fetch(this.hostBack+'/total_de_recebimentos_por_forma_mensal/resumo_geral')
+            const req = await fetch(this.hostBack+'/total_de_recebimentos_por_forma_mensal/resumo_geral/'+this.defFilter())
             const res = await req.json()
 
             const formaRecebimentoTitle = [

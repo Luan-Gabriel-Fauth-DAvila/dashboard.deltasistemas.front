@@ -413,7 +413,7 @@ label {
 .leaflet-popup-content-wrapper {
     background-color: transparent;
     box-shadow: unset;
-    background-image: url('http://127.0.0.1:8000/static/public/estoque/map_popup_bg.svg');
+    background-image: url('https://www.meusistemafinanceiro.com.br/static/public/estoque/map_popup_bg.svg');
     background-position: center;
     background-size: cover;
     width: 300px;
