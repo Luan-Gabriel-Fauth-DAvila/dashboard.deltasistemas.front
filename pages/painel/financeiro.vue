@@ -184,9 +184,9 @@ export default {
             this.saldoDisponivelEmContas_sum = sum
         },
         defData () {
-            const ini = self.data_ini.value.split('-', 3)
-            const fim = self.data_fim.value.split('-', 3)
-            window.location.href = (this.hostFront+'/painel/comercial/financeiro/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
+            const ini = this.$refs.dInicial.date.split('-', 3)
+            const fim = this.$refs.dFinal.date.split('-', 3)
+            window.location.href = (this.hostFront+'/painel/financeiro/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
         },
         defFilter () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -431,7 +431,7 @@ export default {
             this.recebimentosPorForma()
             this.detalhesFinaciamentoEmprestimo()
             this.fluxoDeCaixa()
-        }, 10000)
+        }, 30000)
     },
 }
 </script>

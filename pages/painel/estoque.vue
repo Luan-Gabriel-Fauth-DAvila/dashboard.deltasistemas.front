@@ -2,39 +2,25 @@
     <div style="background: #eeeeee;">
         <Navbar :hostBack="hostBack" />
         <div id="painel">
-            <v-card id="prod_em_estoque">                        
-                <div>
-                    <label>Qtd. Total (Produtos em Estoque)</label>
-                </div>
-                <div>
-                    <h4 id="prod_em_estoque_value">Sem dados</h4>
-                </div>   
-            </v-card>
-            <v-card id="cilindros_cheios">            
-                <div>
-                    <label>Qtd. Cilindros Cheios</label>
-                </div>  
-                <div>
-                    <h4 id="cilindros_cheios_value">Sem Dados</h4>
-                </div>             
-            </v-card>
-            <v-card id="ticket_medio_de_compra">            
-                <div>
-                    <label>Ticket Médio de Compra</label>
-                </div>   
-                <div>
-                    <h4 id="ticket_medio_de_compra_value">Sem dados</h4>
-                </div>            
-            </v-card>
-            <v-card id="vlr_prod_em_estoque">            
-                <div>
-                    <label>Valor Total (Produtos em Estoque)</label>
-                </div> 
-                <div>
-                    <h4 id="vlr_prod_em_estoque_value">Sem dados</h4>
-                </div>           
-            </v-card>
-            <v-card id="mapa_locacao">      
+            <div id="res_geral" class="d-flex justify-space-between"> 
+                <MiniCard 
+                    :label="'Qtd. Total (Produtos em Estoque)'" :value="res_geral.qtdTotalEmEstoque" 
+                    :txColor="theme.txColor.light" :bgColor="'linear-gradient(135deg, #05CD99 0%, #05CD55 100%)'"
+                    :loading="res_geral.loading" />  
+                <MiniCard 
+                    :label="'Qtd. Cilindros Cheios'" :value="res_geral.qtdCilindrosCheios" 
+                    :txColor="theme.txColor.light" :bgColor="'#6452FF'" 
+                    :loading="res_geral.loading" />
+                <MiniCard 
+                    :label="'Ticket Médio de Compra'" :value="res_geral.ticketMedioDeCompraValor" 
+                    :txColor="theme.txColor.light" :bgColor="'#C438EF'" 
+                    :loading="res_geral.loading" :side="'left'" />
+                <MiniCard 
+                    :label="'Valor Total (Produtos em Estoque)'" :value="res_geral.qtdTotalEmEstoqueValor" 
+                    :txColor="theme.txColor.light" :bgColor="'#868CFF'" 
+                    :loading="res_geral.loading" :side="'left'" />
+            </div>
+            <v-card :loading="res_geral.loading" id="mapa_locacao">      
                 <div id="mapa-title">
                     <h2>Mapa Locações</h2>
                 </div> 
@@ -62,11 +48,13 @@
 
 <script>
 import Navbar from '/components/navbar.vue';
+import MiniCard from '/components/MiniCard.vue';
 
 export default {
     name: 'Estoque',
     components: {
         Navbar,
+        MiniCard
     },
     head () {
         return {
@@ -91,7 +79,31 @@ export default {
                 '#6452ff',
                 '#05cd99',
             ],
-            latlon: ''
+            latlon: '',
+
+            res_geral: {
+                qtdCilindrosCheios: null,
+                ticketMedioDeCompraValor: null,
+                qtdTotalEmEstoque: null,
+                qtdTotalEmEstoqueValor: null,
+                loading: false,
+            },
+            theme: {
+                txColor: {
+                    dark: '#1b2559',
+                    light: '#fff',
+                },
+                pallete: [
+                    '#c438ef',
+                    '#ff409a',
+                    '#6452ff',
+                    '#05cd99',
+                    '#6452ff',
+                    '#ffc086',
+                    '#4318ff',
+                    '#05cd99',
+                ]
+            },
         }
     },
     methods: {
@@ -105,32 +117,20 @@ export default {
             return tamanho;
         },
 
-        async qtdCilindrosCheios () {
-            const req = await fetch(this.hostBack+'/qtd_cilindros_cheios')
-            const res = await req.json()
+        async res_geral_estoque () {
+            const req = await fetch(this.hostBack+'/res_geral_estoque')
 
-            self.cilindros_cheios_value = res.qtd[0]
-            
-        },
-
-        async ticketMedioDeCompra () {
-            const req = await fetch(this.hostBack+'/ticket_medio_de_compra')
-            const res = await req.json()
-            
-            if (res[0].media_compras != 'None') {
-                self.ticket_medio_de_compra_value.innerHTML = this.moneyFilter(res[0].media_compras)
+            if (req.status == 200) {
+                const res = await req.json()
+                this.res_geral.qtdCilindrosCheios = res.qtd_cilindros_cheios
+                this.res_geral.ticketMedioDeCompraValor = this.moneyFilter(res.media_compras)
+                this.res_geral.qtdTotalEmEstoqueValor = this.moneyFilter(res.valor_produtos_em_estoque)
+                this.res_geral.qtdTotalEmEstoque = res.qtd_produtos_em_estoque
             }
         },
 
-        async valorDeTodosOsProdutos () {
-            const req = await fetch(this.hostBack+'/total_de_valores_de_todos_os_produtos')
-            const res = await req.json()
-            
-            self.prod_em_estoque_value.innerHTML = res.quantidade
-            self.vlr_prod_em_estoque_value.innerHTML = this.moneyFilter(res.valor_total)
-        },
-
         async map() {
+            this.res_geral.loading = true
             const req_con = await fetch(this.hostBack+'/condicionais_abertas/')
             const res_con = await req_con.json()
             const req = await fetch(this.hostBack+'/mapa_de_locacoes/')
@@ -147,24 +147,27 @@ export default {
                 let cond = res.filter((res) => {return res['numcondicional'] == res_con[i]['numcondicional'] })
                 console.log(cond)
                 let itens = ''
+                let preco = 0
                 cond.forEach((c) => {
+                    preco = preco + parseFloat(c.preco)
                     itens = itens + `
                     <tr>
                         <td id="produto">`+c.dscproduto+`</td>
                         <td id="qtd_locada">`+c.qtd_locada+`</td>
+                        <td id="valor">`+this.moneyFilter(c.preco)+`</td>
                     </tr>
                     `
                 })
-                // console.log(itens)
                 L.marker([res_con[i].lat, res_con[i].lon],{icon: myIcon, alt: ''}).addTo(map).bindPopup(`
                 <div id='popupPointMap'>
-                    <div id="date">Data de Locação 01/05/2021</div>
+                    <div id="date">Data de Locação `+res_con[i].dtacomp+`</div>
                     <p id='title'>`+res_con[i].nome+`</p>
                     <table id='product'>
                         <thead>
                             <tr>
                                 <th id="produto">Produto</th>
                                 <th id="qtd_locada">Qtd</th>
+                                <th id="valor">Valor</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -173,15 +176,15 @@ export default {
                     </table>
                     <div id='result'>
                         <p>Valor Total:</p>
-                        <p>250</p>
+                        <p>`+this.moneyFilter(preco)+`</p>
                     </div>
                 </div>
                 `);
             }
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '© OpenStreetMap'
             }).addTo(map);
+            this.res_geral.loading = false
         },
         async rankingComprasPorFornecedor () {
             const req = await fetch(this.hostBack+'/ranking_compras_por_fornecedor')
@@ -267,13 +270,11 @@ export default {
     },
     mounted () {
         this.map()
-        this.ticketMedioDeCompra()
-        this.valorDeTodosOsProdutos()
+        this.res_geral_estoque()
         this.rankingComprasPorFornecedor()
         this.rankingProdutoMaisComprado ()
         setInterval(() => {
-            this.ticketMedioDeCompra()
-            this.valorDeTodosOsProdutos()
+            this.res_geral_estoque()
             this.rankingComprasPorFornecedor()
             this.rankingProdutoMaisComprado ()
         },10000)
@@ -320,7 +321,7 @@ label {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
     grid-template-rows: 15vh 80vh 50vh;
-    grid-template-areas:    "prod_em_estoque cilindros_cheios ticket_medio_de_compra vlr_prod_em_estoque"
+    grid-template-areas:    "res_geral res_geral res_geral res_geral"
                             "mapa_locacao mapa_locacao mapa_locacao mapa_locacao "
                             "ranking_compra_por_forn ranking_compra_por_forn prod_mais_comprados prod_mais_comprados";
     margin: 0 10%;  
@@ -331,67 +332,19 @@ label {
         display: grid;
         grid-template-columns: 50% 50%;
         grid-template-rows: 15vh 15vh 80vh 50vh 50vh;
-    grid-template-areas:    "prod_em_estoque cilindros_cheios"
-                            "ticket_medio_de_compra vlr_prod_em_estoque"
-                            "mapa_locacao mapa_locacao"
-                            "ranking_compra_por_forn ranking_compra_por_forn"
-                            "prod_mais_comprados prod_mais_comprados";
+        grid-template-areas:    "prod_em_estoque cilindros_cheios"
+                                "ticket_medio_de_compra vlr_prod_em_estoque"
+                                "mapa_locacao mapa_locacao"
+                                "ranking_compra_por_forn ranking_compra_por_forn"
+                                "prod_mais_comprados prod_mais_comprados";
         margin: 0;  
         padding: 5% 0;
    
     }
 }
-#prod_em_estoque {
-    grid-area: prod_em_estoque;
-    color: #e5e5e5;
-    background: linear-gradient(135deg, #05CD99 0%, #05CD55 100%);
+#res_geral {
+    grid-area: res_geral;
     margin: 2vh;
-    padding: 2vh 2vh;
-    padding-bottom: 4vh;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-#cilindros_cheios {
-    grid-area: cilindros_cheios;
-    color: #e5e5e5;
-    background: #6452FF;
-    margin: 2vh;
-    padding: 2vh 2vh;
-    padding-bottom: 4vh;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-#ticket_medio_de_compra {
-    grid-area: ticket_medio_de_compra;
-    color: #e5e5e5;
-    background: #C438EF;
-    margin: 2vh;
-    padding: 2vh 2vh;
-    padding-bottom: 4vh;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-#vlr_prod_em_estoque {
-    grid-area: vlr_prod_em_estoque;
-    color: #e5e5e5;
-    background: #868CFF;
-    margin: 2vh;
-    padding: 2vh 2vh;
-    padding-bottom: 4vh;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
 }
 #mapa_locacao {
     grid-area: mapa_locacao;
@@ -485,7 +438,12 @@ tbody tr {
 }
 #popupPointMap #product #qtd_locada {
     text-align: center;
-    width: 4vw;
+    width: 3vw;
+    font-size: 1.7vh;
+}
+#popupPointMap #product #valor {
+    text-align: center;
+    width: 8vw;
     font-size: 1.7vh;
 }
 </style>
