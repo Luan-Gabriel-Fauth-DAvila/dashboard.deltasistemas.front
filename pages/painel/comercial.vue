@@ -11,7 +11,7 @@
                         <DateField ref="dFinal" :mainLabel="'Data Fim'" />
                     </v-col>
                     <v-col cols="3">
-                        <v-select disabled filled dense :dark="true" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
+                        <v-select filled dense :dark="true" v-model="filter.agr" label="Agrupamentos" :items="agrupamentos" item-text="dscagrupamento" item-value="codagrupamento"></v-select>
                     </v-col>
                     <v-col cols="3" class="d-flex justify-end mt-2">
                         <v-btn @click="defData">Filtrar</v-btn>
@@ -167,6 +167,9 @@ export default {
 
             class_nav: 'deactive',
             url: '',
+            filter: {
+                agr: 0
+            },
             res_geral: {
                 total_vendas: null,
                 total_cmv: null,
@@ -200,22 +203,41 @@ export default {
             }
         },
         defData () {
-            const ini = this.$refs.dInicial.date.split('-', 3)
-            const fim = this.$refs.dFinal.date.split('-', 3)
-            window.location.href = (this.hostFront+'/painel/comercial/?data_ini='+ini[2]+'.'+ini[1]+'.'+ini[0]+'&data_fim='+fim[2]+'.'+fim[1]+'.'+fim[0])
-        },
+            if (this.$refs.dInicial.date == null || this.$refs.dFinal.date == null) {
+                window.location.href = (this.hostFront+'/painel/comercial/?'+ new URLSearchParams({
+                    data_ini: 'null',
+                    data_fim: 'null',
+                    agr: this.filter.agr
+                }))
+            } else {
+                const ini = this.$refs.dInicial.date.split('-')
+                const fim = this.$refs.dFinal.date.split('-')
+                window.location.href = (this.hostFront+'/painel/comercial/?'+ new URLSearchParams({
+                    data_ini: ini[2]+'.'+ini[1]+'.'+ini[0],
+                    data_fim: fim[2]+'.'+fim[1]+'.'+fim[0],
+                    agr: this.filter.agr
+                }))
+            }
+
+        },  
         defFilter () {
             const urlParams = new URLSearchParams(window.location.search);
             const data_ini = urlParams.get('data_ini')
             const data_fim = urlParams.get('data_fim')
-            const urlFilter = '?data_ini='+data_ini+'&data_fim='+data_fim
+            const agr = urlParams.get('agr')
+            const urlFilter = new URLSearchParams({
+                data_ini: data_ini,
+                data_fim: data_fim,
+                agr: agr
+            })
             return urlFilter
         },
         async getAgrupamentos () {
             const req = await fetch(this.hostBack+'/agrupamentos/')
-            const res = await req.json()
-            
-            this.agrupamentos = res
+            if (req.status == 200) {
+                const res = await req.json()
+                this.agrupamentos = res
+            }
         },
         navBar () {
             if (this.class_nav == 'deactive') {
@@ -239,7 +261,7 @@ export default {
 
         async totaisNoMes () {
             this.res_geral.loading = true
-            const req = await fetch(this.hostBack+'/totais_no_mes/'+this.defFilter())
+            const req = await fetch(this.hostBack+'/totais_no_mes/?'+this.defFilter())
             if (req.status == 200) {
                 const res = await req.json()
                 this.res_geral.total_vendas = this.moneyFilter(res.total_itens)
@@ -251,215 +273,215 @@ export default {
         },
 
         async valorVendasMensais () {
-            const req = await fetch(this.hostBack+'/total_vendas_mensal/'+this.defFilter())
-            const res = await req.json()
-
-            const total_vendas_mensal_chart = Highcharts.chart('total_vendas_mensal_chart', {
-                plotOptions: {
-                    series: {
-                        // general options for all series
+            const req = await fetch(this.hostBack+'/total_vendas_mensal/?'+this.defFilter())
+            if (req.status == 200) {
+                const res = await req.json()
+                const total_vendas_mensal_chart = Highcharts.chart('total_vendas_mensal_chart', {
+                    plotOptions: {
+                        series: {
+                            // general options for all series
+                        },
+                        spline: {
+                            color: 'rgb(67, 24, 255)',
+                            colorIndex: 'rgb(134, 140, 255)',
+                        },
                     },
-                    spline: {
-                        color: 'rgb(67, 24, 255)',
-                        colorIndex: 'rgb(134, 140, 255)',
+                    chart: {
+                        height: this.heightDefined
                     },
-                },
-                chart: {
-                    height: this.heightDefined
-                },
-                title: {
-                    text: undefined,
-                },
-                xAxis: {
-                    categories: res.dscmes,
-                },
-                yAxis: {
                     title: {
                         text: undefined,
-                    }
-                },
-                series: [{
-                    type: 'spline',
-                    name: 'Meses',
-                    data: res.total_vendas
-                }]
-            })
-            let total = res.total_vendas.length
-            if (parseInt(res.total_vendas[total-1]) < parseInt(res.total_vendas[total-2])) {
-                self.total_evolucao_arrow.innerHTML = 'arrow_drop_down'
-                self.total_evolucao_arrow.style = 'color: red;'
-                self.total_evolucao.style = 'color: red;'
-                self.total_evolucao.innerHTML = 100 - (res.total_vendas[total-1]/res.total_vendas[total-2]*100).toFixed(2) + '%';                
-            }else{
-                self.total_evolucao_arrow.innerHTML = 'arrow_drop_up'
-                self.total_evolucao_arrow.style = 'color: green;'
-                self.total_evolucao.style = 'color: green;'
-                self.total_evolucao.innerHTML = (res.total_vendas[total-1]/res.total_vendas[total-2]*100).toFixed(2) - 100 + '%';                
-
+                    },
+                    xAxis: {
+                        categories: res.dscmes,
+                    },
+                    yAxis: {
+                        title: {
+                            text: undefined,
+                        }
+                    },
+                    series: [{
+                        type: 'spline',
+                        name: 'Meses',
+                        data: res.total_vendas
+                    }]
+                })
+                let total = res.total_vendas.length
+                if (parseInt(res.total_vendas[total-1]) < parseInt(res.total_vendas[total-2])) {
+                    self.total_evolucao_arrow.innerHTML = 'arrow_drop_down'
+                    self.total_evolucao_arrow.style = 'color: red;'
+                    self.total_evolucao.style = 'color: red;'
+                    self.total_evolucao.innerHTML = 100 - (res.total_vendas[total-1]/res.total_vendas[total-2]*100).toFixed(2) + '%';                
+                }else{
+                    self.total_evolucao_arrow.innerHTML = 'arrow_drop_up'
+                    self.total_evolucao_arrow.style = 'color: green;'
+                    self.total_evolucao.style = 'color: green;'
+                    self.total_evolucao.innerHTML = (res.total_vendas[total-1]/res.total_vendas[total-2]*100).toFixed(2) - 100 + '%';                
+    
+                }
             }
+
         },
 
         async valorVendasPorAgrupamento () {
-            const req = await fetch(this.hostBack+'/vendas_por_agrupamento_mensal/'+this.defFilter())
-            const res = await req.json()
-        
-            const data = {
-                labels: res.dscagrupamento,
-                datasets: [{
-                    label: 'Valor de Vendas',
-                    backgroundColor: this.theme.pallete,
-                    hoverOffset: 4,
-                    data: res.total_vendas,
-                }]
-            };
-            const config = {
-                type: 'pie',
-                data: data,
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'right'
+            const req = await fetch(this.hostBack+'/vendas_por_agrupamento_mensal/?'+this.defFilter())
+            if (req.status == 200) {
+                const res = await req.json()
+                const data = {
+                    labels: res.dscagrupamento,
+                    datasets: [{
+                        label: 'Valor de Vendas',
+                        backgroundColor: this.theme.pallete,
+                        hoverOffset: 4,
+                        data: res.total_vendas,
+                    }]
+                };
+                const config = {
+                    type: 'pie',
+                    data: data,
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right'
+                            },
                         },
-                    },
+                    }
+                };
+                var chartStatus = Chart.getChart("total_vendas_por_agrupamento_chart");
+                if (chartStatus != undefined) {
+                    chartStatus.data.datasets.data = res.total_vendas
+                    chartStatus.update()
+                }else {
+                    const total_por_agrupamento_mensal = new Chart(
+                        document.getElementById('total_vendas_por_agrupamento_chart'),
+                        config
+                    );
                 }
-            };
-            var chartStatus = Chart.getChart("total_vendas_por_agrupamento_chart");
-            if (chartStatus != undefined) {
-                chartStatus.data.datasets.data = res.total_vendas
-                chartStatus.update()
-            }else {
-                const total_por_agrupamento_mensal = new Chart(
-                    document.getElementById('total_vendas_por_agrupamento_chart'),
-                    config
-                );
             }
+        
         },
 
         async metaDeVendas () {
             const req = await fetch(this.hostBack+'/meta_de_vendas')
-            const res = await req.json()
-
-            this.metadevendas_total = parseFloat(res.total_vendido);
-            this.metadevendas_atual = parseFloat(res.valor);
+            if (req.status == 200) {
+                const res = await req.json()
+                this.metadevendas_total = parseFloat(res.total_vendido);
+                this.metadevendas_atual = parseFloat(res.valor);
+            }
         },
 
         async rankingVendasPorVendedor () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_vendedor'+this.defFilter())
-            const res = await req.json()
-
-            // this.rankingvendedores_var = res
-            // this.rankingvendedores_sum = parseFloat(res[0].valor)
-            // this.rankingvendedores_total_vendas = parseFloat(res.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            const total_vendas_mensal_chart = Highcharts.chart('ranking_de_vendas_por_vendedor_chart', {
-                plotOptions: {
-                    series: {
-                        // general options for all series
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_vendedor/?'+this.defFilter())
+            if (req.status == 200) {
+                const res = await req.json()
+                const total_vendas_mensal_chart = Highcharts.chart('ranking_de_vendas_por_vendedor_chart', {
+                    plotOptions: {
+                        series: {
+                            // general options for all series
+                        },
+                        bar: {
+                            color: 'rgb(67, 24, 255)',
+                            colorIndex: 'rgb(134, 140, 255)',
+                        },
                     },
-                    bar: {
-                        color: 'rgb(67, 24, 255)',
-                        colorIndex: 'rgb(134, 140, 255)',
+                    chart: {
+                        height: parseInt(window.screen.height)*0.42
                     },
-                },
-                chart: {
-                    height: parseInt(window.screen.height)*0.42
-                },
-                title: {
-                    text: undefined,
-                },
-                xAxis: {
-                    categories: res.nome
-                },
-                yAxis: {
                     title: {
                         text: undefined,
-                    }
-                },
-                series: [{
-                    type: 'bar',
-                    name: 'Vendedores',
-                    data: res.valor,
-                },]
-            })
-
+                    },
+                    xAxis: {
+                        categories: res.nome
+                    },
+                    yAxis: {
+                        title: {
+                            text: undefined,
+                        }
+                    },
+                    series: [{
+                        type: 'bar',
+                        name: 'Vendedores',
+                        data: res.valor,
+                    },]
+                })
+            }
         },
 
         async rankingVendasPorCliente () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_cliente'+this.defFilter())
-            const res = await req.json()
-
-            // this.rankingclientes_var = res
-            // this.rankingclientes_sum = parseFloat(res[0].total_vendas)
-            // this.rankingclientes_total_vendas = parseFloat(res.total_vendas).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-
-            const total_vendas_mensal_chart = Highcharts.chart('ranking_de_vendas_por_cliente_chart', {
-                plotOptions: {
-                    series: {
-                        // general options for all series
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_cliente/?'+this.defFilter())
+            if (req.status == 200) {
+                const res = await req.json()
+                const total_vendas_mensal_chart = Highcharts.chart('ranking_de_vendas_por_cliente_chart', {
+                    plotOptions: {
+                        series: {
+                            // general options for all series
+                        },
+                        bar: {
+                            color: 'rgb(67, 24, 255)',
+                            colorIndex: 'rgb(134, 140, 255)',
+                        },
                     },
-                    bar: {
-                        color: 'rgb(67, 24, 255)',
-                        colorIndex: 'rgb(134, 140, 255)',
+                    chart: {
+                        height: parseInt(window.screen.height)*0.55
                     },
-                },
-                chart: {
-                    height: parseInt(window.screen.height)*0.55
-                },
-                title: {
-                    text: undefined,
-                },
-                xAxis: {
-                    categories: res.nome
-                },
-                yAxis: {
                     title: {
                         text: undefined,
-                    }
-                },
-                series: [{
-                    type: 'bar',
-                    name: 'Clientes',
-                    data: res.total_vendas,
-                },]
-            })
+                    },
+                    xAxis: {
+                        categories: res.nome
+                    },
+                    yAxis: {
+                        title: {
+                            text: undefined,
+                        }
+                    },
+                    series: [{
+                        type: 'bar',
+                        name: 'Clientes',
+                        data: res.total_vendas,
+                    },]
+                })
+            }
         },
         
         async produtosMaisVendidos () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_produto/'+this.defFilter())
-            const res = await req.json()
-            
-            const data = {
+            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_produto/?'+this.defFilter())
+            if (req.status == 200) {
+                const res = await req.json()
+                const data = {
                 labels: res.nome,
-                datasets: [{
-                    label: 'Qtd de Vendida',
-                    backgroundColor: this.theme.pallete,
-                    hoverOffset: 4,
-                    data: res.qtd,
-                }]
-            };
-            const config = {
-                type: 'pie',
-                data: data,
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'right'
+                    datasets: [{
+                        label: 'Qtd de Vendida',
+                        backgroundColor: this.theme.pallete,
+                        hoverOffset: 4,
+                        data: res.qtd,
+                    }]
+                };
+                const config = {
+                    type: 'pie',
+                    data: data,
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right'
+                            },
                         },
-                    },
+                    }
+                };
+                var chartStatus = Chart.getChart("produtos_mais_vendidos_chart");
+                if (chartStatus != undefined) {
+                    chartStatus.data.datasets.data = res.total_vendas
+                    chartStatus.update()
+                }else {
+                    const total_por_agrupamento = new Chart(
+                        document.getElementById('produtos_mais_vendidos_chart'),
+                        config
+                    );
                 }
-            };
-            var chartStatus = Chart.getChart("produtos_mais_vendidos_chart");
-            if (chartStatus != undefined) {
-                chartStatus.data.datasets.data = res.total_vendas
-                chartStatus.update()
-            }else {
-                const total_por_agrupamento = new Chart(
-                    document.getElementById('produtos_mais_vendidos_chart'),
-                    config
-                );
             }
         },
     },
