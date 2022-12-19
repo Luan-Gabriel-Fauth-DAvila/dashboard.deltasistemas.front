@@ -50,7 +50,7 @@
                     <canvas id="total_vendas_por_agrupamento_chart"></canvas>
                 </div>
             </v-card>
-            <v-card id="meta_de_vendas">
+            <!-- <v-card id="meta_de_vendas">
                 <div>
                     <h2>Meta de Vendas</h2><label>Por Mês</label>
                 </div>
@@ -66,7 +66,7 @@
                         </div>
                     </div>
                 </div>
-            </v-card>
+            </v-card> -->
             <v-card id="ranking_de_vendas_por_vendedor">
                 <div>
                     <h2 class="mb-4">Ranking de Vendas Por vendedor</h2>
@@ -373,9 +373,18 @@ export default {
         },
 
         async rankingVendasPorVendedor () {
-            const req = await fetch(this.hostBack+'/ranking_de_vendas_por_vendedor/?'+this.defFilter())
+            const req = await fetch(this.hostBack+'/meta_de_vendas/?'+this.defFilter())
             if (req.status == 200) {
                 const res = await req.json()
+                let vendas = []
+                let metas = []
+                let nomes = []
+                res.map((i) => { 
+                    vendas.push(parseFloat(i.total_vendas))
+                    metas.push(parseFloat(i.meta))
+                    nomes.push(i.nome)
+                })
+                console.log(vendas, metas)
                 const total_vendas_mensal_chart = Highcharts.chart('ranking_de_vendas_por_vendedor_chart', {
                     plotOptions: {
                         series: {
@@ -387,24 +396,31 @@ export default {
                         },
                     },
                     chart: {
-                        height: parseInt(window.screen.height)*0.42
+                        height: parseInt(window.screen.height)*0.40
                     },
                     title: {
                         text: undefined,
                     },
                     xAxis: {
-                        categories: res.nome
+                        categories: nomes
                     },
                     yAxis: {
                         title: {
                             text: undefined,
                         }
                     },
-                    series: [{
-                        type: 'bar',
-                        name: 'Vendedores',
-                        data: res.valor,
-                    },]
+                    series: [
+                        {
+                            type: 'bar',
+                            name: 'Vendas',
+                            data: vendas,
+                        },
+                        {
+                            type: 'bar',
+                            name: 'Metas',
+                            data: metas,
+                        },
+                    ]
                 })
             }
         },
@@ -572,7 +588,7 @@ h6 {
                             "total_vendas_mensal total_vendas_mensal total_vendas_por_agrupamento total_vendas_por_agrupamento"
                             "ranking_produtos_mais_vendidos ranking_produtos_mais_vendidos ranking_de_vendas_por_cliente ranking_de_vendas_por_cliente"
                             "ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor ranking_de_vendas_por_cliente ranking_de_vendas_por_cliente"
-                            "ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor meta_de_vendas meta_de_vendas";
+                            "ranking_de_vendas_por_vendedor ranking_de_vendas_por_vendedor null null";
     margin: 5vh 10%;  
     padding: 0 0; 
 }
